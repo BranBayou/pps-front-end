@@ -27,6 +27,21 @@ const currentItemIndex = ref(0);
 const quantityToPick = ref(0);
 const packingInstructions = ref(null);
 const error = ref('');
+const dashboardOverview = {
+  userName: 'Valerie Cancian',
+  filterStatus: 'Pending',
+  warehouseName: 'Primary',
+  orders: {
+    readyToShip: 25,
+    dueToday: 4,
+    shippedToday: 5,
+  },
+  items: {
+    readyToPick: 57,
+    dueToday: 7,
+    shippedToday: 16,
+  },
+};
 
 const currentItem = computed(() => pickList.value[currentItemIndex.value]);
 
@@ -94,7 +109,7 @@ const handleRestart = () => {
 
 <template>
   <div class="min-h-screen bg-gray-50 text-gray-900">
-    <StartScreen v-if="appState === APP_STATES.START" @start="handleStartPicking" />
+    <StartScreen v-if="appState === APP_STATES.START" :overview="dashboardOverview" @start="handleStartPicking" />
 
     <div
       v-else-if="appState === APP_STATES.LOADING"
@@ -161,6 +176,6 @@ const handleRestart = () => {
       </button>
     </div>
 
-    <StartScreen v-else @start="handleStartPicking" />
+    <StartScreen v-else :overview="dashboardOverview" @start="handleStartPicking" />
   </div>
 </template>

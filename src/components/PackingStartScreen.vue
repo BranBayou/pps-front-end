@@ -65,3 +65,5 @@ const handleScan = () => {
   </div>
 </template>
 
+
+
