@@ -54,7 +54,7 @@ const handleScan = () => {
       </p>
       <button
         type="button"
-        class="w-full flex items-center justify-center space-x-3 bg-indigo-600 text-white font-bold py-4 px-6 rounded-xl text-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all hover:scale-105 disabled:bg-gray-400 disabled:scale-100"
+        class="w-full flex items-center justify-center space-x-3 bg-purple-600 text-white font-bold py-4 px-6 rounded-xl text-lg hover:bg-purple-700 focus:outline-none focus:ring-4 focus:ring-purple-300 transition-all hover:scale-105 disabled:bg-gray-400 disabled:scale-100"
         :disabled="showCheck"
         @click="handleScan"
       >
@@ -64,6 +64,7 @@ const handleScan = () => {
     </div>
   </div>
 </template>
+
 
 
 

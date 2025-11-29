@@ -23,8 +23,7 @@ const APP_STATES = {
 const appState = ref(APP_STATES.START);
 const toteId = ref('');
 const pickList = ref([]);
-const currentItemIndex = ref(0);
-const quantityToPick = ref(0);
+const pickedQuantities = ref({});
 const packingInstructions = ref(null);
 const error = ref('');
 const dashboardOverview = {
@@ -43,41 +42,53 @@ const dashboardOverview = {
   },
 };
 
-const currentItem = computed(() => pickList.value[currentItemIndex.value]);
+const allItemsPicked = computed(() => {
+  return pickList.value.every((item) => {
+    const picked = pickedQuantities.value[item.id] || 0;
+    return picked >= item.quantity;
+  });
+});
 
 const handleStartPicking = async () => {
   appState.value = APP_STATES.LOADING;
   error.value = '';
   toteId.value = `T${Math.floor(100000 + Math.random() * 900000)}`;
-  currentItemIndex.value = 0;
+  pickedQuantities.value = {};
 
   try {
     const optimizedList = await optimizePickingRoute(MOCK_PICK_LIST);
     pickList.value = optimizedList;
-    quantityToPick.value = optimizedList[0]?.quantity ?? 0;
     appState.value = APP_STATES.PICKING;
   } catch (err) {
     console.error('Failed to start picking job', err);
     error.value = 'Could not optimize picking route. Using default order.';
     pickList.value = [...MOCK_PICK_LIST];
-    quantityToPick.value = pickList.value[0]?.quantity ?? 0;
     appState.value = APP_STATES.PICKING;
   }
 };
 
-const handleItemScanned = (scannedQuantity) => {
-  const remaining = quantityToPick.value - scannedQuantity;
-  if (remaining > 0) {
-    quantityToPick.value = remaining;
-    return;
-  }
+const handleItemPicked = ({ itemId, quantity }) => {
+  const currentPicked = pickedQuantities.value[itemId] || 0;
+  const item = pickList.value.find((i) => i.id === itemId);
+  if (!item) return;
 
-  if (currentItemIndex.value < pickList.value.length - 1) {
-    currentItemIndex.value += 1;
-    quantityToPick.value = pickList.value[currentItemIndex.value].quantity;
-  } else {
+  const newPicked = Math.min(currentPicked + quantity, item.quantity);
+  pickedQuantities.value[itemId] = newPicked;
+
+  // Check if all items are picked
+  if (allItemsPicked.value) {
     appState.value = APP_STATES.PICKING_COMPLETE;
   }
+};
+
+const handlePickingBack = () => {
+  appState.value = APP_STATES.START;
+};
+
+const handlePickingProgress = () => {
+  // Could show a progress modal or navigate to a progress screen
+  // For now, we'll just log it
+  console.log('Progress clicked');
 };
 
 const handleProceedToPacking = () => {
@@ -100,8 +111,7 @@ const handleRestart = () => {
   appState.value = APP_STATES.START;
   toteId.value = '';
   pickList.value = [];
-  currentItemIndex.value = 0;
-  quantityToPick.value = 0;
+  pickedQuantities.value = {};
   error.value = '';
   packingInstructions.value = null;
 };
@@ -120,13 +130,13 @@ const handleRestart = () => {
     </div>
 
     <PickingScreen
-      v-else-if="appState === APP_STATES.PICKING && currentItem"
+      v-else-if="appState === APP_STATES.PICKING && pickList.length > 0"
       :tote-id="toteId"
-      :current-item="currentItem"
-      :current-item-index="currentItemIndex"
-      :total-items="pickList.length"
-      :quantity-to-pick="quantityToPick"
-      @item-scanned="handleItemScanned"
+      :pick-list="pickList"
+      :picked-quantities="pickedQuantities"
+      @item-picked="handleItemPicked"
+      @back="handlePickingBack"
+      @progress="handlePickingProgress"
     />
 
     <div v-else-if="appState === APP_STATES.PICKING" class="flex items-center justify-center h-screen">

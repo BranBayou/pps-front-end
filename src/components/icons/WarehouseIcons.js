@@ -169,5 +169,44 @@ export const TruckIcon = defineComponent({
       ),
 });
 
+export const ArrowLeftIcon = defineComponent({
+  name: 'ArrowLeftIcon',
+  props: classesProp,
+  setup: (props) =>
+    () =>
+      h(
+        'svg',
+        {
+          xmlns: 'http://www.w3.org/2000/svg',
+          fill: 'none',
+          viewBox: '0 0 24 24',
+          stroke: 'currentColor',
+          'stroke-width': '2',
+          class: props.classes,
+        },
+        [h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', d: 'M15 19l-7-7 7-7' })],
+      ),
+});
+
+export const DotsVerticalIcon = defineComponent({
+  name: 'DotsVerticalIcon',
+  props: classesProp,
+  setup: (props) =>
+    () =>
+      h(
+        'svg',
+        {
+          xmlns: 'http://www.w3.org/2000/svg',
+          fill: 'none',
+          viewBox: '0 0 24 24',
+          stroke: 'currentColor',
+          'stroke-width': '2',
+          class: props.classes,
+        },
+        [h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', d: 'M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z' })],
+      ),
+});
+
+
 
 

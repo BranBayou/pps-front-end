@@ -48,7 +48,7 @@ const greeting = computed(() => `Welcome, Gorilla Store!`);
         </div>
       </div>
 
-      <div class="bg-white rounded-3xl p-6 text-center">
+      <div class="p-6 text-center">
         <!-- <p class="text-slate-600 text-lg font-medium mb-6">How would you like to process them?</p> -->
         <button
           type="button"

@@ -207,7 +207,7 @@ const selectRate = (rate) => {
           />
           <button
             type="button"
-            class="w-full flex items-center justify-center space-x-3 bg-blue-600 text-white font-bold py-5 px-6 rounded-xl text-xl hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-transform hover:scale-105"
+            class="w-full flex items-center justify-center space-x-3 bg-purple-600 text-white font-bold py-5 px-6 rounded-xl text-xl hover:bg-purple-700 focus:outline-none focus:ring-4 focus:ring-purple-300 transition-transform hover:scale-105"
             @click="handleConfirmPack"
           >
             <CheckIcon classes="w-8 h-8" />

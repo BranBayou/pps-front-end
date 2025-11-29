@@ -23,7 +23,7 @@ const emit = defineEmits(['proceed']);
       <p class="text-gray-600 mb-8">Please deliver the tote to the packing station.</p>
       <button
         type="button"
-        class="w-full bg-indigo-600 text-white font-bold py-4 px-6 rounded-xl text-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-transform hover:scale-105"
+        class="w-full bg-purple-600 text-white font-bold py-4 px-6 rounded-xl text-lg hover:bg-purple-700 focus:outline-none focus:ring-4 focus:ring-purple-300 transition-transform hover:scale-105"
         @click="emit('proceed')"
       >
         Proceed to Packing
@@ -31,6 +31,7 @@ const emit = defineEmits(['proceed']);
     </div>
   </div>
 </template>
+
 
 
 
