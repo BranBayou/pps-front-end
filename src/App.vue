@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import CompletionScreen from './components/CompletionScreen.vue';
+import MobileMenu from './components/MobileMenu.vue';
 import PackingStartScreen from './components/PackingStartScreen.vue';
 import PackingScreen from './components/Pack/PackingScreen.vue';
 import PickingScreen from './components/Pick/PickingScreen.vue';
@@ -26,6 +27,7 @@ const pickList = ref([]);
 const pickedQuantities = ref({});
 const packingInstructions = ref(null);
 const error = ref('');
+const isMenuOpen = ref(false);
 const dashboardOverview = {
   userName: 'Valerie Cancian',
   filterStatus: 'Pending',
@@ -115,11 +117,21 @@ const handleRestart = () => {
   error.value = '';
   packingInstructions.value = null;
 };
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
+};
+
+const closeMenu = () => {
+  isMenuOpen.value = false;
+};
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-50 text-gray-900">
-    <StartScreen v-if="appState === APP_STATES.START" :overview="dashboardOverview" @start="handleStartPicking" />
+    <MobileMenu :is-open="isMenuOpen" @close="closeMenu" />
+    
+    <StartScreen v-if="appState === APP_STATES.START" :overview="dashboardOverview" @start="handleStartPicking" @open-menu="toggleMenu" />
 
     <div
       v-else-if="appState === APP_STATES.LOADING"

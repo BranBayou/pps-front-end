@@ -19,6 +19,8 @@ const enteredQuantity = ref('1');
 const packingStep = ref('packing');
 const shippingRates = ref([]);
 const selectedRate = ref(null);
+const confirmedBoxes = ref([]);
+const boxWeights = ref({});
 
 watch(
   () => props.pickList,
@@ -29,6 +31,8 @@ watch(
     packingStep.value = 'packing';
     shippingRates.value = [];
     selectedRate.value = null;
+    confirmedBoxes.value = [];
+    boxWeights.value = {};
   },
   { immediate: true },
 );
@@ -66,7 +70,13 @@ const handleConfirmPack = () => {
   } else {
     packedItemIndex.value = props.pickList.length;
     quantityToScan.value = 0;
-    packingStep.value = 'selecting_courier';
+    packingStep.value = 'confirming_boxes';
+    // Initialize confirmed boxes with all recommended boxes
+    confirmedBoxes.value = props.instructions.boxes.map((box, index) => ({
+      ...box,
+      index,
+      confirmed: true,
+    }));
   }
 };
 
@@ -97,6 +107,42 @@ const handleFinalizePacking = () => {
 const isRateSelected = (rate) => selectedRate.value?.serviceName === rate.serviceName;
 const selectRate = (rate) => {
   selectedRate.value = rate;
+};
+
+const toggleBoxConfirmation = (boxIndex) => {
+  const box = confirmedBoxes.value[boxIndex];
+  if (box) {
+    box.confirmed = !box.confirmed;
+    if (!box.confirmed) {
+      // Clear weight when unconfirming
+      delete boxWeights.value[box.index];
+    }
+  }
+};
+
+const updateBoxWeight = (boxIndex, weight) => {
+  const box = confirmedBoxes.value[boxIndex];
+  if (!box) return;
+  
+  const numWeight = parseFloat(weight);
+  if (!isNaN(numWeight) && numWeight > 0) {
+    boxWeights.value[box.index] = numWeight;
+  } else {
+    delete boxWeights.value[box.index];
+  }
+};
+
+const canProceedToCourier = computed(() => {
+  return confirmedBoxes.value.some((box) => box.confirmed) && 
+         confirmedBoxes.value.every((box) => !box.confirmed || boxWeights.value[box.index] > 0);
+});
+
+const handleConfirmBoxes = () => {
+  if (!canProceedToCourier.value) {
+    window.alert('Please confirm at least one box and enter weights for all confirmed boxes.');
+    return;
+  }
+  packingStep.value = 'selecting_courier';
 };
 </script>
 
@@ -216,6 +262,70 @@ const selectRate = (rate) => {
         </div>
       </div>
 
+      <div v-else-if="packingStep === 'confirming_boxes'" class="w-full">
+        <h3 class="text-xl font-bold mb-4 text-gray-800 text-center">Confirm Boxes & Weights</h3>
+        <p class="text-gray-600 mb-6 text-center">Please confirm which boxes you used and enter the weight of each box with items inside.</p>
+        <div class="space-y-4 mb-6 max-h-64 overflow-y-auto">
+          <div
+            v-for="(box, index) in confirmedBoxes"
+            :key="index"
+            class="bg-white border-2 rounded-xl p-4"
+            :class="box.confirmed ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 bg-gray-50'"
+          >
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex items-start space-x-3 flex-1">
+                <BoxIcon classes="w-8 h-8 text-indigo-500 mt-1 flex-shrink-0" />
+                <div class="flex-1">
+                  <p class="text-lg font-bold text-gray-900">{{ box.boxSize }} Box</p>
+                  <p class="text-sm text-gray-600 mt-1">{{ box.contents }}</p>
+                </div>
+              </div>
+              <label class="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  :checked="box.confirmed"
+                  @change="toggleBoxConfirmation(index)"
+                  class="h-5 w-5 text-indigo-600 rounded focus:ring-indigo-500"
+                />
+                <span class="ml-2 text-sm font-medium text-gray-700">Used</span>
+              </label>
+            </div>
+            <div v-if="box.confirmed" class="mt-3">
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Weight (lbs):
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                min="0.1"
+                :value="boxWeights[box.index] || ''"
+                @input="updateBoxWeight(index, $event.target.value)"
+                placeholder="Enter weight"
+                class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-lg font-semibold"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4">
+          <button
+            type="button"
+            class="w-1/3 bg-gray-200 text-gray-800 font-bold py-5 px-6 rounded-xl text-lg hover:bg-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-300"
+            @click="packingStep = 'packing'"
+          >
+            Back
+          </button>
+          <button
+            type="button"
+            class="w-2/3 flex items-center justify-center space-x-3 bg-indigo-600 text-white font-bold py-5 px-6 rounded-xl text-xl transition-all disabled:bg-gray-400 disabled:cursor-not-allowed enabled:hover:bg-indigo-700 enabled:focus:outline-none enabled:focus:ring-4 enabled:focus:ring-indigo-300 enabled:hover:scale-105"
+            :disabled="!canProceedToCourier"
+            @click="handleConfirmBoxes"
+          >
+            <CheckIcon classes="w-6 h-6" />
+            <span>Confirm & Continue</span>
+          </button>
+        </div>
+      </div>
+
       <div v-else-if="packingStep === 'selecting_courier'" class="text-center w-full">
         <h3 class="text-xl font-bold mb-4 text-gray-800">Packing Complete!</h3>
         <p class="text-gray-600 mb-6">Please select a courier to get shipping rates.</p>
@@ -251,13 +361,13 @@ const selectRate = (rate) => {
             v-for="rate in shippingRates"
             :key="rate.serviceName"
             class="flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all"
-            :class="isRateSelected(rate) ? 'bg-indigo-100 border-indigo-500 ring-4 ring-indigo-200' : 'bg-white border-gray-200 hover:border-indigo-300'"
+            :class="isRateSelected(rate) ? 'bg-purple-100 border-purple-500 ring-4 ring-purple-200' : 'bg-white border-gray-200 hover:border-purple-300'"
           >
             <div class="flex items-center">
               <input
                 type="radio"
                 name="shipping-rate"
-                class="h-5 w-5 text-indigo-600"
+                class="h-5 w-5 text-purple-600"
                 :checked="isRateSelected(rate)"
                 @change="selectRate(rate)"
               />

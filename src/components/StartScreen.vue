@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue';
-import { ToteIcon } from './icons/WarehouseIcons';
+import { MenuIcon, ToteIcon } from './icons/WarehouseIcons';
 
 const props = defineProps({
   overview: {
@@ -9,22 +9,29 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['start']);
+const emit = defineEmits(['start', 'open-menu']);
 
-const greeting = computed(() => `Welcome, Gorilla Store!`);
+const greeting = computed(() => `Welcome, Gorilla Warehouse!`);
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+  <div class="min-h-screen bg-gray-50 flex items-center justify-center p-4 relative">
+    <button
+      type="button"
+      class="absolute top-4 right-4 p-3 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors z-10"
+      @click="emit('open-menu')"
+    >
+      <MenuIcon classes="w-6 h-6 text-gray-700" />
+    </button>
     <div class="w-full max-w-3xl space-y-6">
       <div class="bg-white rounded-3xl shadow-lg p-8">
-        <p class="text-sm text-gray-500">
+        <!-- <p class="text-sm text-gray-500">
           These are your orders for
           <span class="text-indigo-600 font-semibold cursor-pointer">{{ overview.filterStatus }}</span>
           status in
           <span class="text-indigo-600 font-semibold cursor-pointer">{{ overview.warehouseName }}</span>
           warehouse
-        </p>
+        </p> -->
         <h1 class="text-3xl font-bold text-gray-900 mt-2">{{ greeting }}</h1>
 
         <div class="mt-6 grid grid-cols-2 gap-6">

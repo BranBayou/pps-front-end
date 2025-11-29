@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue';
-import { ArrowLeftIcon, CheckIcon, DotsVerticalIcon } from '../icons/WarehouseIcons';
+import { ArrowLeftIcon, CheckIcon, DotsVerticalIcon, ToteIcon } from '../icons/WarehouseIcons';
 
 const props = defineProps({
   toteId: { type: String, required: true },
@@ -52,13 +52,19 @@ const handleProgress = () => {
 </script>
 
 <template>
-  <div class="flex flex-col h-screen bg-white">
+  <div class="flex flex-col h-screen bg-white md:max-w-md md:mx-auto md:shadow-lg">
     <header class="bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
       <div class="flex justify-between items-center">
         <button type="button" class="p-2 hover:bg-gray-100 rounded-full" @click="handleBack">
           <ArrowLeftIcon classes="w-6 h-6 text-gray-700" />
         </button>
-        <h1 class="text-lg font-semibold text-gray-900">Items to pick</h1>
+        <div class="flex flex-col items-center flex-1">
+          <h1 class="text-lg font-semibold text-gray-900">Items to pick</h1>
+          <div class="flex items-center space-x-2 mt-1">
+            <ToteIcon classes="w-5 h-5 text-gray-600" />
+            <span class="text-sm font-medium text-gray-700">Tote: {{ toteId }}</span>
+          </div>
+        </div>
         <button type="button" class="text-blue-600 font-medium hover:text-blue-700" @click="handleProgress">
           Progress
         </button>
@@ -93,9 +99,9 @@ const handleProgress = () => {
                 class="w-14 h-14 object-cover rounded flex-shrink-0 border border-gray-200"
               />
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-900">{{ item.sku }}</p>
+                <p class="text-sm font-medium text-gray-500">SKU: {{ item.sku }}</p>
                 <p class="text-base font-semibold text-gray-900 mt-0.5 leading-tight">{{ item.name }}</p>
-                <p class="text-sm text-gray-600 mt-1">Bin: {{ item.bin }}</p>
+                <p class="text-sm text-gray-500 mt-1">Bin: {{ item.bin }}</p>
               </div>
             </div>
 
@@ -106,7 +112,7 @@ const handleProgress = () => {
             <!-- Right: On Hand & Options -->
             <div class="flex-shrink-0 flex flex-col items-end gap-2">
               <div class="text-right">
-                <p class="text-xs text-gray-600">QoH:</p>
+                <p class="text-base text-gray-600">QoH:</p>
                 <p class="text-sm font-semibold text-gray-900">{{ item.qoh }}</p>
               </div>
               <button
@@ -114,7 +120,7 @@ const handleProgress = () => {
                 class="p-1 hover:bg-gray-200 rounded-full transition-colors"
                 @click.stop="handleItemPick(item, 1)"
               >
-                <DotsVerticalIcon classes="w-5 h-5 text-gray-600" />
+                <!-- <DotsVerticalIcon classes="w-5 h-5 text-gray-600" /> -->
               </button>
             </div>
           </div>
