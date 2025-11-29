@@ -52,7 +52,7 @@ const handleProgress = () => {
 </script>
 
 <template>
-  <div class="flex flex-col h-screen bg-white md:max-w-md md:mx-auto md:shadow-lg">
+  <div class="flex flex-col h-screen bg-white md:max-w-3xl md:mx-auto md:shadow-lg">
     <header class="bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
       <div class="flex justify-between items-center">
         <button type="button" class="p-2 hover:bg-gray-100 rounded-full" @click="handleBack">
