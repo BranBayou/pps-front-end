@@ -1,6 +1,8 @@
 <script setup>
 import { computed, ref } from 'vue';
 import CompletionScreen from './components/CompletionScreen.vue';
+import Login from './components/auth/Login.vue';
+import Logout from './components/auth/Logout.vue';
 import MobileMenu from './components/MobileMenu.vue';
 import PackingStartScreen from './components/PackingStartScreen.vue';
 import PackingScreen from './components/Pack/PackingScreen.vue';
@@ -28,6 +30,10 @@ const pickedQuantities = ref({});
 const packingInstructions = ref(null);
 const error = ref('');
 const isMenuOpen = ref(false);
+const isAuthenticated = ref(false);
+const showLogin = ref(true);
+const showLogout = ref(false);
+const currentUser = ref('Dee Bak');
 const dashboardOverview = {
   userName: 'Valerie Cancian',
   filterStatus: 'Pending',
@@ -125,79 +131,118 @@ const toggleMenu = () => {
 const closeMenu = () => {
   isMenuOpen.value = false;
 };
+
+const handleLogin = ({ user, pin }) => {
+  // Simple authentication - in real app, this would validate with backend
+  if (pin.length >= 4) {
+    currentUser.value = user;
+    isAuthenticated.value = true;
+    showLogin.value = false;
+  }
+};
+
+const handleLoginClose = () => {
+  // Don't allow closing login if not authenticated
+  if (!isAuthenticated.value) {
+    return;
+  }
+  showLogin.value = false;
+};
+
+const handleLogoutClick = () => {
+  isMenuOpen.value = false;
+  showLogout.value = true;
+};
+
+const handleLogoutConfirm = () => {
+  isAuthenticated.value = false;
+  showLogout.value = false;
+  showLogin.value = true;
+  appState.value = APP_STATES.START;
+  handleRestart();
+};
+
+const handleLogoutCancel = () => {
+  showLogout.value = false;
+};
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-50 text-gray-900">
-    <MobileMenu :is-open="isMenuOpen" @close="closeMenu" />
+    <Login v-if="showLogin" @login="handleLogin" @close="handleLoginClose" />
+    <Logout v-if="showLogout" @confirm="handleLogoutConfirm" @cancel="handleLogoutCancel" />
     
-    <StartScreen v-if="appState === APP_STATES.START" :overview="dashboardOverview" @start="handleStartPicking" @open-menu="toggleMenu" />
+    <template v-if="isAuthenticated">
+      <MobileMenu :is-open="isMenuOpen" @close="closeMenu" @logout="handleLogoutClick" />
+      
+      <StartScreen v-if="appState === APP_STATES.START" :overview="dashboardOverview" @start="handleStartPicking" @open-menu="toggleMenu" />
 
-    <div
-      v-else-if="appState === APP_STATES.LOADING"
-      class="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-gray-700"
-    >
-      <LoadingSpinner classes="w-16 h-16 text-indigo-500" />
-      <p class="text-xl font-semibold mt-4">Optimizing pick route...</p>
-    </div>
-
-    <PickingScreen
-      v-else-if="appState === APP_STATES.PICKING && pickList.length > 0"
-      :tote-id="toteId"
-      :pick-list="pickList"
-      :picked-quantities="pickedQuantities"
-      @item-picked="handleItemPicked"
-      @back="handlePickingBack"
-      @progress="handlePickingProgress"
-    />
-
-    <div v-else-if="appState === APP_STATES.PICKING" class="flex items-center justify-center h-screen">
-      No items to pick.
-    </div>
-
-    <CompletionScreen
-      v-else-if="appState === APP_STATES.PICKING_COMPLETE"
-      :tote-id="toteId"
-      :total-items="pickList.length"
-      @proceed="handleProceedToPacking"
-    />
-
-    <PackingStartScreen
-      v-else-if="appState === APP_STATES.PACKING_START"
-      :tote-id="toteId"
-      @begin-packing="handleStartPacking"
-    />
-
-    <div
-      v-else-if="appState === APP_STATES.PACKING_LOADING"
-      class="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-gray-700"
-    >
-      <LoadingSpinner classes="w-16 h-16 text-indigo-500" />
-      <p class="text-xl font-semibold mt-4">Generating packing instructions...</p>
-    </div>
-
-    <PackingScreen
-      v-else-if="appState === APP_STATES.PACKING && packingInstructions"
-      :tote-id="toteId"
-      :pick-list="pickList"
-      :instructions="packingInstructions"
-      @packing-complete="handleRestart"
-    />
-
-    <div
-      v-else-if="appState === APP_STATES.ERROR"
-      class="flex flex-col items-center justify-center min-h-screen bg-red-50 p-4 text-center"
-    >
-      <p class="text-red-600 font-semibold">{{ error }}</p>
-      <button
-        type="button"
-        class="mt-4 bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg"
-        @click="handleRestart"
+      <div
+        v-else-if="appState === APP_STATES.LOADING"
+        class="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-gray-700"
       >
-        Start Over
-      </button>
-    </div>
+        <LoadingSpinner classes="w-16 h-16 text-indigo-500" />
+        <p class="text-xl font-semibold mt-4">Optimizing pick route...</p>
+      </div>
 
-    <StartScreen v-else :overview="dashboardOverview" @start="handleStartPicking" />
+      <PickingScreen
+        v-else-if="appState === APP_STATES.PICKING && pickList.length > 0"
+        :tote-id="toteId"
+        :pick-list="pickList"
+        :picked-quantities="pickedQuantities"
+        @item-picked="handleItemPicked"
+        @back="handlePickingBack"
+        @progress="handlePickingProgress"
+      />
+
+      <div v-else-if="appState === APP_STATES.PICKING" class="flex items-center justify-center h-screen">
+        No items to pick.
+      </div>
+
+      <CompletionScreen
+        v-else-if="appState === APP_STATES.PICKING_COMPLETE"
+        :tote-id="toteId"
+        :total-items="pickList.length"
+        @proceed="handleProceedToPacking"
+      />
+
+      <PackingStartScreen
+        v-else-if="appState === APP_STATES.PACKING_START"
+        :tote-id="toteId"
+        @begin-packing="handleStartPacking"
+      />
+
+      <div
+        v-else-if="appState === APP_STATES.PACKING_LOADING"
+        class="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-gray-700"
+      >
+        <LoadingSpinner classes="w-16 h-16 text-indigo-500" />
+        <p class="text-xl font-semibold mt-4">Generating packing instructions...</p>
+      </div>
+
+      <PackingScreen
+        v-else-if="appState === APP_STATES.PACKING && packingInstructions"
+        :tote-id="toteId"
+        :pick-list="pickList"
+        :instructions="packingInstructions"
+        @packing-complete="handleRestart"
+      />
+
+      <div
+        v-else-if="appState === APP_STATES.ERROR"
+        class="flex flex-col items-center justify-center min-h-screen bg-red-50 p-4 text-center"
+      >
+        <p class="text-red-600 font-semibold">{{ error }}</p>
+        <button
+          type="button"
+          class="mt-4 bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg"
+          @click="handleRestart"
+        >
+          Start Over
+        </button>
+      </div>
+
+      <StartScreen v-else :overview="dashboardOverview" @start="handleStartPicking" />
+    </template>
   </div>
 </template>

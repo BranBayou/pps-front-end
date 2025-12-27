@@ -245,6 +245,84 @@ export const XIcon = defineComponent({
       ),
 });
 
+export const LockIcon = defineComponent({
+  name: 'LockIcon',
+  props: classesProp,
+  setup: (props) =>
+    () =>
+      h(
+        'svg',
+        {
+          xmlns: 'http://www.w3.org/2000/svg',
+          fill: 'none',
+          viewBox: '0 0 24 24',
+          stroke: 'currentColor',
+          'stroke-width': '2',
+          class: props.classes,
+        },
+        [h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', d: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' })],
+      ),
+});
+
+export const ChevronDownIcon = defineComponent({
+  name: 'ChevronDownIcon',
+  props: classesProp,
+  setup: (props) =>
+    () =>
+      h(
+        'svg',
+        {
+          xmlns: 'http://www.w3.org/2000/svg',
+          fill: 'none',
+          viewBox: '0 0 24 24',
+          stroke: 'currentColor',
+          'stroke-width': '2',
+          class: props.classes,
+        },
+        [h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', d: 'M19 9l-7 7-7-7' })],
+      ),
+});
+
+export const ExpandIcon = defineComponent({
+  name: 'ExpandIcon',
+  props: classesProp,
+  setup: (props) =>
+    () =>
+      h(
+        'svg',
+        {
+          xmlns: 'http://www.w3.org/2000/svg',
+          fill: 'none',
+          viewBox: '0 0 24 24',
+          stroke: 'currentColor',
+          'stroke-width': '2',
+          class: props.classes,
+        },
+        [
+          h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', d: 'M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4' }),
+        ],
+      ),
+});
+
+export const BackspaceIcon = defineComponent({
+  name: 'BackspaceIcon',
+  props: classesProp,
+  setup: (props) =>
+    () =>
+      h(
+        'svg',
+        {
+          xmlns: 'http://www.w3.org/2000/svg',
+          fill: 'none',
+          viewBox: '0 0 24 24',
+          stroke: 'currentColor',
+          'stroke-width': '2',
+          class: props.classes,
+        },
+        [h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', d: 'M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z' })],
+      ),
+});
+
 
 
 

@@ -145,7 +145,7 @@ const quickActions = [
 
           <!-- User Info -->
           <section class="pt-4 border-t border-gray-200">
-            <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg mb-3">
               <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
                 <span class="text-white font-semibold">VC</span>
               </div>
@@ -154,6 +154,13 @@ const quickActions = [
                 <p class="text-sm text-gray-600">Warehouse Operator</p>
               </div>
             </div>
+            <button
+              type="button"
+              class="w-full py-3 px-4 bg-red-50 hover:bg-red-100 text-red-700 font-semibold rounded-lg transition-colors text-center"
+              @click="$emit('logout')"
+            >
+              Logout
+            </button>
           </section>
         </div>
       </div>
@@ -182,5 +189,6 @@ const quickActions = [
   transform: translateX(100%);
 }
 </style>
+
 
 
