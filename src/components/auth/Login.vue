@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from 'vue';
 import { BackspaceIcon, CheckIcon, ChevronDownIcon, ExpandIcon, LockIcon } from '../icons/WarehouseIcons';
+import { useAuthStore } from '@/Stores/authStore';
 
-const emit = defineEmits(['login', 'close']);
+const authStore = useAuthStore();
 
 const selectedUser = ref('Dee Bak');
 const pin = ref('');
@@ -22,13 +23,9 @@ const handleBackspace = () => {
 
 const handleConfirm = () => {
   if (pin.value.length >= 4) {
-    emit('login', { user: selectedUser.value, pin: pin.value });
+    authStore.login({ user: selectedUser.value, pin: pin.value });
     pin.value = '';
   }
-};
-
-const handleClose = () => {
-  emit('close');
 };
 
 const selectUser = (user) => {
