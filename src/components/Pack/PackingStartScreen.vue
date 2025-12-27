@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue';
-import { CheckIcon, ScanIcon, ToteIcon } from './icons/WarehouseIcons';
+import { CheckIcon, ScanIcon, ToteIcon } from '../icons/WarehouseIcons';
 
 defineProps({
   toteId: { type: String, required: true },

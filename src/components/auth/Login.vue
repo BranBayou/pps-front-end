@@ -128,13 +128,13 @@ const selectUser = (user) => {
 
       <!-- Close Button -->
       <div class="p-6 pt-0">
-        <button
+        <!-- <button
           type="button"
           class=" p-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition-colors"
           @click="handleClose"
         >
           Close
-        </button>
+        </button> -->
       </div>
     </div>
   </div>

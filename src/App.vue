@@ -4,7 +4,7 @@ import CompletionScreen from './components/CompletionScreen.vue';
 import Login from './components/auth/Login.vue';
 import Logout from './components/auth/Logout.vue';
 import MobileMenu from './components/MobileMenu.vue';
-import PackingStartScreen from './components/PackingStartScreen.vue';
+import PackingStartScreen from './components/Pack/PackingStartScreen.vue';
 import PackingScreen from './components/Pack/PackingScreen.vue';
 import PickingScreen from './components/Pick/PickingScreen.vue';
 import StartScreen from './components/StartScreen.vue';
