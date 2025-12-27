@@ -1,5 +1,5 @@
 import { create_router, createWebHistory } from 'vue-router';
-import Login from '@/components/auth/Login.vue';
+import Login from '@/components/Auth/Login.vue';
 import Dashboard from '@/components/dashboard/Dashboard.vue';
 
 const routes = [
