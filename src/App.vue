@@ -11,6 +11,7 @@ import StartScreen from './components/StartScreen.vue';
 import { LoadingSpinner } from './components/icons/WarehouseIcons';
 import { MOCK_PICK_LIST } from './data/mockPickList';
 import { getPackingInstructions, optimizePickingRoute } from './services/workflowService';
+import { useAuthStore } from './Stores/authStore';
 
 const APP_STATES = {
   START: 'START',
@@ -23,6 +24,8 @@ const APP_STATES = {
   ERROR: 'ERROR',
 };
 
+const authStore = useAuthStore();
+
 const appState = ref(APP_STATES.START);
 const toteId = ref('');
 const pickList = ref([]);
@@ -30,10 +33,6 @@ const pickedQuantities = ref({});
 const packingInstructions = ref(null);
 const error = ref('');
 const isMenuOpen = ref(false);
-const isAuthenticated = ref(false);
-const showLogin = ref(true);
-const showLogout = ref(false);
-const currentUser = ref('Dee Bak');
 const dashboardOverview = {
   userName: 'Valerie Cancian',
   filterStatus: 'Pending',
@@ -133,46 +132,35 @@ const closeMenu = () => {
 };
 
 const handleLogin = ({ user, pin }) => {
-  // Simple authentication - in real app, this would validate with backend
-  if (pin.length >= 4) {
-    currentUser.value = user;
-    isAuthenticated.value = true;
-    showLogin.value = false;
-  }
+  authStore.login({ user, pin });
 };
 
 const handleLoginClose = () => {
-  // Don't allow closing login if not authenticated
-  if (!isAuthenticated.value) {
-    return;
-  }
-  showLogin.value = false;
+  authStore.closeLogin();
 };
 
 const handleLogoutClick = () => {
   isMenuOpen.value = false;
-  showLogout.value = true;
+  authStore.openLogout();
 };
 
 const handleLogoutConfirm = () => {
-  isAuthenticated.value = false;
-  showLogout.value = false;
-  showLogin.value = true;
+  authStore.logout();
   appState.value = APP_STATES.START;
   handleRestart();
 };
 
 const handleLogoutCancel = () => {
-  showLogout.value = false;
+  authStore.cancelLogout();
 };
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-50 text-gray-900">
-    <Login v-if="showLogin" @login="handleLogin" @close="handleLoginClose" />
-    <Logout v-if="showLogout" @confirm="handleLogoutConfirm" @cancel="handleLogoutCancel" />
+    <Login v-if="authStore.showLogin" @login="handleLogin" @close="handleLoginClose" />
+    <Logout v-if="authStore.showLogout" @confirm="handleLogoutConfirm" @cancel="handleLogoutCancel" />
     
-    <template v-if="isAuthenticated">
+    <template v-if="authStore.isAuthenticated">
       <MobileMenu :is-open="isMenuOpen" @close="closeMenu" @logout="handleLogoutClick" />
       
       <StartScreen v-if="appState === APP_STATES.START" :overview="dashboardOverview" @start="handleStartPicking" @open-menu="toggleMenu" />
