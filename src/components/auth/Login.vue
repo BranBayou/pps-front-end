@@ -85,7 +85,7 @@ const selectUser = (user) => {
             :value="pin"
             readonly
             placeholder="Enter PIN"
-            class="w-full pl-12 pr-4 py-4 text-2xl font-semibold text-center border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-gray-50"
+            class="w-full pl-12 pr-4 py-2 font-semibold text-center border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-gray-50"
           />
         </div>
       </div>
@@ -97,28 +97,28 @@ const selectUser = (user) => {
             v-for="num in [1, 2, 3, 4, 5, 6, 7, 8, 9]"
             :key="num"
             type="button"
-            class="aspect-square rounded-full bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-2xl font-semibold text-gray-900 transition-colors"
+            class="py-2 rounded-lg bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-2xl font-semibold text-gray-900 transition-colors"
             @click="handleNumberClick(num)"
           >
             {{ num }}
           </button>
           <button
             type="button"
-            class="aspect-square rounded-full bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-900 transition-colors flex items-center justify-center"
+            class="py-2 rounded-lg bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-900 transition-colors flex items-center justify-center"
             @click="handleBackspace"
           >
             <BackspaceIcon classes="w-6 h-6" />
           </button>
           <button
             type="button"
-            class="aspect-square rounded-full bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-2xl font-semibold text-gray-900 transition-colors"
+            class="py-2 rounded-lg bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-2xl font-semibold text-gray-900 transition-colors"
             @click="handleNumberClick(0)"
           >
             0
           </button>
           <button
             type="button"
-            class="aspect-square rounded-full bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white transition-colors flex items-center justify-center"
+            class="py-2 rounded-lg bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white transition-colors flex items-center justify-center"
             @click="handleConfirm"
           >
             <CheckIcon classes="w-6 h-6" />
@@ -130,7 +130,7 @@ const selectUser = (user) => {
       <div class="p-6 pt-0">
         <button
           type="button"
-          class="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition-colors"
+          class=" p-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition-colors"
           @click="handleClose"
         >
           Close

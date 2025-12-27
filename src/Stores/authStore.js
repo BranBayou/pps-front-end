@@ -8,7 +8,6 @@ export const useAuthStore = defineStore('auth', () => {
   const currentUser = ref('Dee Bak');
 
   const login = ({ user, pin }) => {
-    // Simple authentication - in real app, this would validate with backend
     if (pin.length >= 4) {
       currentUser.value = user;
       isAuthenticated.value = true;
@@ -19,7 +18,6 @@ export const useAuthStore = defineStore('auth', () => {
   };
 
   const closeLogin = () => {
-    // Don't allow closing login if not authenticated
     if (!isAuthenticated.value) {
       return;
     }
