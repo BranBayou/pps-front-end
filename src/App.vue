@@ -9,11 +9,12 @@ import PackingScreen from './components/Pack/PackingScreen.vue';
 import PickingScreen from './components/Pick/PickingScreen.vue';
 import StartScreen from './components/StartScreen.vue';
 import { LoadingSpinner } from './components/icons/WarehouseIcons';
-import { MOCK_PICK_LIST } from './data/mockPickList';
 import { useAuthStore } from './Stores/authStore';
 import { useWorkflowServiceStore } from '@/Stores/workflowServiceStore';
+import { useOrderStore } from '@/Stores/orderStore';
 
 const workflowServiceStore = useWorkflowServiceStore();
+const orderStore = useOrderStore();
 
 const APP_STATES = {
   START: 'START',
@@ -65,13 +66,13 @@ const handleStartPicking = async () => {
   pickedQuantities.value = {};
 
   try {
-    const optimizedList = await workflowServiceStore.optimizePickingRoute(MOCK_PICK_LIST);
+    const optimizedList = await workflowServiceStore.optimizePickingRoute(orderStore.MOCK_PICK_LIST);
     pickList.value = optimizedList;
     appState.value = APP_STATES.PICKING;
   } catch (err) {
     console.error('Failed to start picking job', err);
     error.value = 'Could not optimize picking route. Using default order.';
-    pickList.value = [...MOCK_PICK_LIST];
+    pickList.value = [...orderStore.MOCK_PICK_LIST];
     appState.value = APP_STATES.PICKING;
   }
 };

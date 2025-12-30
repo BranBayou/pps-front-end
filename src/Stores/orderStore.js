@@ -1,0 +1,75 @@
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
+import api from '../plugins/axios';
+
+export const useOrderStore = defineStore('order', () => {
+    const MOCK_PICK_LIST = [
+      {
+        id: '1',
+        sku: 'HD-GGB-01',
+        name: 'Premium Green Tea',
+        bin: 'C-03-B',
+        quantity: 2,
+        imageUrl: 'https://images.unsplash.com/photo-1576092762791-d02d21f4a5ce?auto=format&fit=crop&w=200&q=80',
+        qoh: 25,
+      },
+      {
+        id: '2',
+        sku: 'SF-RB-12',
+        name: 'Robot Vacuum Cleaner',
+        bin: 'A-01-A',
+        quantity: 1,
+        imageUrl: 'https://images.unsplash.com/photo-1589920038808-c1abc2439c8c?auto=format&fit=crop&w=200&q=80',
+        qoh: 8,
+      },
+      {
+        id: '3',
+        sku: 'BK-NF-45',
+        name: 'The Silent Patient',
+        bin: 'D-11-F',
+        quantity: 1,
+        imageUrl: 'https://images.unsplash.com/photo-1589998059171-988d887df646?auto=format&fit=crop&w=200&q=80',
+        qoh: 15,
+      },
+      {
+        id: '4',
+        sku: 'KT-KN-08',
+        name: "Chef's Knife 8-inch",
+        bin: 'A-02-C',
+        quantity: 1,
+        imageUrl: 'https://images.unsplash.com/photo-1614328898687-5a3962b3a1a3?auto=format&fit=crop&w=200&q=80',
+        qoh: 32,
+      },
+      {
+        id: '5',
+        sku: 'EL-HP-23',
+        name: 'Noise-Cancelling Headphones',
+        bin: 'B-07-D',
+        quantity: 3,
+        imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=200&q=80',
+        qoh: 12,
+      },
+      {
+        id: '6',
+        sku: 'TO-LG-99',
+        name: 'Dinosaur Building Blocks',
+        bin: 'C-04-A',
+        quantity: 1,
+        imageUrl: 'https://images.unsplash.com/photo-1575364289437-fb1419d52481?auto=format&fit=crop&w=200&q=80',
+        qoh: 20,
+      },
+      {
+        id: '7',
+        sku: 'SP-WB-32',
+        name: 'Insulated Water Bottle',
+        bin: 'B-05-E',
+        quantity: 5,
+        imageUrl: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=200&q=80',
+        qoh: 50,
+      },
+    ];
+
+    return {
+    MOCK_PICK_LIST,
+    };
+});
