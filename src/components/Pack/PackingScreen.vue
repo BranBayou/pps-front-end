@@ -2,6 +2,9 @@
 import { computed, ref, watch } from 'vue';
 import { BoxIcon, CheckIcon, LoadingSpinner, ToteIcon, TruckIcon } from '../../components/icons/WarehouseIcons';
 import { getShippingRates } from '../../services/shippingService';
+import { useShippingServiceStore } from '@/Stores/shippingServiceStore';
+
+const shippingServiceStore = useShippingServiceStore();
 
 const props = defineProps({
   toteId: { type: String, required: true },
@@ -84,7 +87,7 @@ const handleFetchRates = async (courier) => {
   packingStep.value = 'fetching_rates';
   selectedRate.value = null;
   try {
-    shippingRates.value = await getShippingRates(courier);
+    shippingRates.value = await shippingServiceStore.getShippingRates(courier);
     packingStep.value = 'showing_rates';
   } catch (error) {
     console.error('Failed to fetch shipping rates', error);
