@@ -10,8 +10,10 @@ import PickingScreen from './components/Pick/PickingScreen.vue';
 import StartScreen from './components/StartScreen.vue';
 import { LoadingSpinner } from './components/icons/WarehouseIcons';
 import { MOCK_PICK_LIST } from './data/mockPickList';
-import { getPackingInstructions, optimizePickingRoute } from './services/workflowService';
 import { useAuthStore } from './Stores/authStore';
+import { useWorkflowServiceStore } from '@/Stores/workflowServiceStore';
+
+const workflowServiceStore = useWorkflowServiceStore();
 
 const APP_STATES = {
   START: 'START',
@@ -63,7 +65,7 @@ const handleStartPicking = async () => {
   pickedQuantities.value = {};
 
   try {
-    const optimizedList = await optimizePickingRoute(MOCK_PICK_LIST);
+    const optimizedList = await workflowServiceStore.optimizePickingRoute(MOCK_PICK_LIST);
     pickList.value = optimizedList;
     appState.value = APP_STATES.PICKING;
   } catch (err) {
@@ -105,7 +107,7 @@ const handleProceedToPacking = () => {
 const handleStartPacking = async () => {
   appState.value = APP_STATES.PACKING_LOADING;
   try {
-    packingInstructions.value = await getPackingInstructions(pickList.value);
+    packingInstructions.value = await workflowServiceStore.getPackingInstructions(pickList.value);
     appState.value = APP_STATES.PACKING;
   } catch (err) {
     console.error('Failed to get packing instructions', err);
