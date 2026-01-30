@@ -17,6 +17,19 @@ const handleNumberClick = (number) => {
   }
 };
 
+const handlePinInput = (event) => {
+  const value = event.target.value.replace(/\D/g, '').slice(0, 6);
+  pin.value = value;
+  event.target.value = value;
+};
+
+const handlePinKeydown = (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    handleConfirm();
+  }
+};
+
 const handleBackspace = () => {
   pin.value = pin.value.slice(0, -1);
 };
@@ -80,9 +93,13 @@ const selectUser = (user) => {
           <input
             type="password"
             :value="pin"
-            readonly
+            inputmode="numeric"
+            autocomplete="one-time-code"
             placeholder="Enter PIN"
+            maxlength="6"
             class="w-full pl-12 pr-4 py-2 font-semibold text-center border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-gray-50"
+            @input="handlePinInput"
+            @keydown="handlePinKeydown"
           />
         </div>
       </div>
