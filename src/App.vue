@@ -7,6 +7,7 @@ import MobileMenu from './components/MobileMenu.vue';
 import PackingStartScreen from './components/Pack/PackingStartScreen.vue';
 import PackingScreen from './components/Pack/PackingScreen.vue';
 import PickingScreen from './components/Pick/PickingScreen.vue';
+import ScanToteScreen from './components/Pick/ScanToteScreen.vue';
 import StartScreen from './components/StartScreen.vue';
 import { LoadingSpinner } from './components/icons/WarehouseIcons';
 import { useAuthStore } from './Stores/authStore';
@@ -18,6 +19,7 @@ const orderStore = useOrderStore();
 
 const APP_STATES = {
   START: 'START',
+  SCAN_TOTE: 'SCAN_TOTE',
   LOADING: 'LOADING',
   PICKING: 'PICKING',
   PICKING_COMPLETE: 'PICKING_COMPLETE',
@@ -59,10 +61,19 @@ const allItemsPicked = computed(() => {
   });
 });
 
+const handleGoToScanTote = () => {
+  appState.value = APP_STATES.SCAN_TOTE;
+};
+
+const handleToteSelected = ({ toteId: selectedToteId }) => {
+  toteId.value = selectedToteId;
+  handleStartPicking();
+};
+
 const handleStartPicking = async () => {
   appState.value = APP_STATES.LOADING;
   error.value = '';
-  toteId.value = `T${Math.floor(100000 + Math.random() * 900000)}`;
+  
   pickedQuantities.value = {};
 
   try {
@@ -75,6 +86,10 @@ const handleStartPicking = async () => {
     pickList.value = [...orderStore.MOCK_PICK_LIST];
     appState.value = APP_STATES.PICKING;
   }
+};
+
+const handleScanToteBack = () => {
+  appState.value = APP_STATES.START;
 };
 
 const handleItemPicked = ({ itemId, quantity }) => {
@@ -92,7 +107,7 @@ const handleItemPicked = ({ itemId, quantity }) => {
 };
 
 const handlePickingBack = () => {
-  appState.value = APP_STATES.START;
+  appState.value = APP_STATES.SCAN_TOTE;
 };
 
 const handlePickingProgress = () => {
@@ -159,14 +174,20 @@ const handleLogoutCancel = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 text-gray-900">
+  <div class="h-screen md:max-w-3xl md:mx-auto md:shadow-lg bg-gray-50 text-gray-900">
     <Login v-if="authStore.showLogin" @login="handleLogin" @close="handleLoginClose" />
     <Logout v-if="authStore.showLogout" @confirm="handleLogoutConfirm" @cancel="handleLogoutCancel" />
     
     <template v-if="authStore.isAuthenticated">
       <MobileMenu :is-open="isMenuOpen" @close="closeMenu" @logout="handleLogoutClick" />
       
-      <StartScreen v-if="appState === APP_STATES.START" :overview="dashboardOverview" @start="handleStartPicking" @open-menu="toggleMenu" />
+      <StartScreen v-if="appState === APP_STATES.START" :overview="dashboardOverview" @start="handleGoToScanTote" @open-menu="toggleMenu" />
+
+      <ScanToteScreen
+        v-else-if="appState === APP_STATES.SCAN_TOTE"
+        @select-tote="handleToteSelected"
+        @back="handleScanToteBack"
+      />
 
       <div
         v-else-if="appState === APP_STATES.LOADING"
