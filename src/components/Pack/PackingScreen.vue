@@ -168,12 +168,12 @@ const handleConfirmBoxes = () => {
           <div
             v-for="(box, index) in instructions.boxes"
             :key="box.boxSize + index"
-            class="bg-indigo-50 border-l-8 rounded-lg p-4 flex items-start space-x-4"
+            class="bg-purple-50 border-l-8 rounded-lg p-4 flex items-start space-x-4"
             :class="BOX_COLORS[index % BOX_COLORS.length]"
           >
-            <BoxIcon classes="w-10 h-10 text-indigo-500 mt-1 flex-shrink-0" />
+            <BoxIcon classes="w-10 h-10 text-purple-500 mt-1 flex-shrink-0" />
             <div>
-              <p class="text-lg font-bold text-indigo-900">{{ box.boxSize }} Box</p>
+              <p class="text-lg font-bold text-purple-900">{{ box.boxSize }} Box</p>
               <p class="text-sm text-gray-700">
                 {{ box.contents }}
               </p>
@@ -272,11 +272,11 @@ const handleConfirmBoxes = () => {
             v-for="(box, index) in confirmedBoxes"
             :key="index"
             class="bg-white border-2 rounded-xl p-4"
-            :class="box.confirmed ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 bg-gray-50'"
+            :class="box.confirmed ? 'border-purple-500 bg-purple-50' : 'border-gray-200 bg-gray-50'"
           >
             <div class="flex items-start justify-between mb-3">
               <div class="flex items-start space-x-3 flex-1">
-                <BoxIcon classes="w-8 h-8 text-indigo-500 mt-1 flex-shrink-0" />
+                <BoxIcon classes="w-8 h-8 text-purple-500 mt-1 flex-shrink-0" />
                 <div class="flex-1">
                   <p class="text-lg font-bold text-gray-900">{{ box.boxSize }} Box</p>
                   <p class="text-sm text-gray-600 mt-1">{{ box.contents }}</p>
@@ -287,7 +287,7 @@ const handleConfirmBoxes = () => {
                   type="checkbox"
                   :checked="box.confirmed"
                   @change="toggleBoxConfirmation(index)"
-                  class="h-5 w-5 text-indigo-600 rounded focus:ring-indigo-500"
+                  class="h-5 w-5 rounded border-gray-300 text-purple-600 accent-purple-600 focus:ring-purple-500 checked:bg-purple-600"
                 />
                 <span class="ml-2 text-sm font-medium text-gray-700">Used</span>
               </label>
@@ -318,7 +318,7 @@ const handleConfirmBoxes = () => {
           </button>
           <button
             type="button"
-            class="w-2/3 flex items-center justify-center space-x-3 bg-indigo-600 text-white font-bold py-5 px-6 rounded-xl text-xl transition-all disabled:bg-gray-400 disabled:cursor-not-allowed enabled:hover:bg-indigo-700 enabled:focus:outline-none enabled:focus:ring-4 enabled:focus:ring-indigo-300 enabled:hover:scale-105"
+            class="w-2/3 flex items-center justify-center space-x-3 bg-purple-600 text-white font-bold py-5 px-6 rounded-xl text-xl transition-all disabled:bg-gray-400 disabled:cursor-not-allowed enabled:hover:bg-purple-700 enabled:focus:outline-none enabled:focus:ring-4 enabled:focus:ring-purple-300 enabled:hover:scale-105"
             :disabled="!canProceedToCourier"
             @click="handleConfirmBoxes"
           >
