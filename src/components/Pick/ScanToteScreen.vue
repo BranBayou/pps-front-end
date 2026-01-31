@@ -18,7 +18,7 @@ const filteredTotes = computed(() => {
 });
 
 const selectTote = (tote) => {
-  emit('select-tote', { toteId: tote.id, barcode: tote.barcode });
+  emit('select-tote', { toteId: tote.barcode });
 };
 
 const handleBack = () => {
@@ -43,12 +43,12 @@ const handleBack = () => {
 
     <div class="p-4 border-b border-gray-200">
       <div class="relative">
-        <SearchIcon classes="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-500" />
+        <SearchIcon classes="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-500" />
         <input
           v-model="searchQuery"
           type="text"
           placeholder="Search totes..."
-          class="w-full pl-10 pr-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          class="w-full pl-10 pr-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
         />
       </div>
     </div>
