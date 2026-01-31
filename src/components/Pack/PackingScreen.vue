@@ -448,7 +448,7 @@ const handleConfirmBoxes = () => {
           </button>
           <button
             type="button"
-            class="w-2/3 flex items-center justify-center space-x-3 bg-green-500 text-white font-bold py-5 px-6 rounded-xl text-xl transition-all disabled:bg-gray-400 disabled:cursor-not-allowed enabled:hover:bg-green-600 enabled:focus:outline-none enabled:focus:ring-4 enabled:focus:ring-green-300 enabled:hover:scale-105"
+            class="w-2/3 flex items-center justify-center space-x-3 bg-purple-500 text-white font-bold py-5 px-6 rounded-xl text-xl transition-all disabled:bg-gray-400 disabled:cursor-not-allowed enabled:hover:bg-purple-600 enabled:focus:outline-none enabled:focus:ring-4 enabled:focus:ring-purple-300 enabled:hover:scale-105"
             :disabled="!selectedRate"
             @click="handleFinalizePacking"
           >

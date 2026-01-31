@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
-import { ArrowLeftIcon, CheckIcon, DotsVerticalIcon, ToteIcon } from '../icons/WarehouseIcons';
+import { ArrowLeftIcon, CheckIcon, ToteIcon } from '../icons/WarehouseIcons';
+import PickQuantityPopup from './PickQuantityPopup.vue';
 
 const props = defineProps({
   toteId: { type: String, required: true },
@@ -26,10 +27,28 @@ const totalItemsLeft = computed(() => {
 });
 
 const totalOrders = computed(() => {
-  // For now, we'll use a fixed number or calculate based on pickList
-  // This could be passed as a prop if needed
-  return 7; // Based on the image description
+  return 7;
 });
+
+const selectedItem = ref(null);
+
+const remainingForSelected = computed(() =>
+  selectedItem.value ? getRemainingQuantity(selectedItem.value) : 0
+);
+
+const openPickPopup = (item) => {
+  if (isItemComplete(item)) return;
+  selectedItem.value = item;
+};
+
+const closePickPopup = () => {
+  selectedItem.value = null;
+};
+
+const handleConfirmPick = ({ itemId, quantity }) => {
+  emit('item-picked', { itemId, quantity });
+  closePickPopup();
+};
 
 const handleItemPick = (item, quantity = 1) => {
   if (isItemComplete(item)) return;
@@ -38,7 +57,7 @@ const handleItemPick = (item, quantity = 1) => {
 
 const handleItemRowClick = (item) => {
   if (!isItemComplete(item)) {
-    handleItemPick(item, 1);
+    openPickPopup(item);
   }
 };
 
@@ -138,5 +157,13 @@ const handleProgress = () => {
         </p>
       </div>
     </footer>
+
+    <PickQuantityPopup
+      :item="selectedItem"
+      :tote-id="toteId"
+      :remaining="remainingForSelected"
+      @confirm="handleConfirmPick"
+      @close="closePickPopup"
+    />
   </div>
 </template>
