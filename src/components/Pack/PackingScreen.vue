@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { BoxIcon, CheckIcon, LoadingSpinner, ToteIcon, TruckIcon } from '../../components/icons/WarehouseIcons';
+import { BoxIcon, CheckIcon, InformationCircleIcon, LoadingSpinner, ToteIcon, TruckIcon, XIcon } from '../../components/icons/WarehouseIcons';
 import { useShippingServiceStore } from '@/Stores/shippingServiceStore';
 
 const shippingServiceStore = useShippingServiceStore();
@@ -23,6 +23,7 @@ const shippingRates = ref([]);
 const selectedRate = ref(null);
 const confirmedBoxes = ref([]);
 const boxWeights = ref({});
+const showInstructionsPopup = ref(false);
 
 watch(
   () => props.pickList,
@@ -182,7 +183,7 @@ const handleConfirmBoxes = () => {
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1">
         <div class="bg-white p-5 rounded-2xl shadow">
           <h2 class="text-xl font-bold text-gray-800 mb-3">Item Packing List</h2>
           <div class="space-y-3 max-h-96 overflow-y-auto pr-2">
@@ -222,16 +223,72 @@ const handleConfirmBoxes = () => {
             </div>
           </div>
         </div>
-
-        <div class="bg-white p-5 rounded-2xl shadow">
-          <h2 class="text-xl font-bold text-gray-800 mb-3">General Instructions</h2>
-          <ul class="space-y-2 list-decimal list-inside text-gray-700">
-            <li v-for="(step, index) in instructions.instructions" :key="index">
-              {{ step }}
-            </li>
-          </ul>
-        </div>
       </div>
+
+      <!-- Floating Instructions button (bottom right) -->
+      <button
+        type="button"
+        class="fixed bottom-24 right-6 z-20 flex items-center justify-center w-14 h-14 rounded-full bg-purple-600 text-white shadow-lg hover:bg-purple-700 focus:outline-none focus:ring-4 focus:ring-purple-300 transition-all md:bottom-8 md:right-8"
+        aria-label="General instructions"
+        @click="showInstructionsPopup = true"
+      >
+        <InformationCircleIcon classes="w-7 h-7" />
+      </button>
+
+      <!-- Instructions popup -->
+      <Teleport to="body">
+        <Transition name="popup">
+          <div
+            v-if="showInstructionsPopup"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+            @click.self="showInstructionsPopup = false"
+          >
+            <div
+              class="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[85vh] flex flex-col"
+              role="dialog"
+              aria-labelledby="instructions-title"
+              aria-modal="true"
+            >
+              <div class="flex items-center justify-between p-5 border-b border-gray-200 bg-purple-50 rounded-t-2xl">
+                <div class="flex items-center gap-3">
+                  <div class="flex items-center justify-center w-10 h-10 rounded-full bg-purple-600 text-white">
+                    <InformationCircleIcon classes="w-6 h-6 text-white" />
+                  </div>
+                  <h2 id="instructions-title" class="text-xl font-bold text-gray-900">General packing Instructions</h2>
+                </div>
+                <button
+                  type="button"
+                  class="p-2 hover:bg-purple-100 rounded-full transition-colors"
+                  aria-label="Close"
+                  @click="showInstructionsPopup = false"
+                >
+                  <XIcon classes="w-5 h-5 text-gray-600" />
+                </button>
+              </div>
+              <div class="p-5 overflow-y-auto flex-1">
+                <ul class="space-y-3 list-decimal list-inside text-gray-700">
+                  <li
+                    v-for="(step, index) in instructions.instructions"
+                    :key="index"
+                    class="pl-1 leading-relaxed"
+                  >
+                    {{ step }}
+                  </li>
+                </ul>
+              </div>
+              <div class="p-5 border-t border-gray-200 rounded-b-2xl">
+                <button
+                  type="button"
+                  class="w-full py-3 px-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition-colors"
+                  @click="showInstructionsPopup = false"
+                >
+                  Got it
+                </button>
+              </div>
+            </div>
+          </div>
+        </Transition>
+      </Teleport>
     </main>
 
     <footer class="p-4 sticky bottom-0 bg-white/90 backdrop-blur-sm border-t border-gray-200 shadow-t-xl">
@@ -409,3 +466,13 @@ const handleConfirmBoxes = () => {
   </div>
 </template>
 
+<style scoped>
+.popup-enter-active,
+.popup-leave-active {
+  transition: opacity 0.2s ease;
+}
+.popup-enter-from,
+.popup-leave-to {
+  opacity: 0;
+}
+</style>
