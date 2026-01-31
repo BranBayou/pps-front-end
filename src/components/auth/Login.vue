@@ -87,7 +87,7 @@ const selectUser = (user) => {
       </div>
 
       <!-- PIN Input Field -->
-      <div class="p-6">
+      <div class="px-6">
         <div class="relative">
           <LockIcon classes="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
@@ -105,7 +105,7 @@ const selectUser = (user) => {
       </div>
 
       <!-- Numeric Keypad -->
-      <div class="px-6 pb-6">
+      <div class="p-6 pb-6">
         <div class="grid grid-cols-3 gap-3">
           <button
             v-for="num in [1, 2, 3, 4, 5, 6, 7, 8, 9]"
