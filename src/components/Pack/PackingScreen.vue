@@ -150,7 +150,7 @@ const handleConfirmBoxes = () => {
 
 <template>
   <div class="flex flex-col h-screen bg-gray-50">
-    <header class="bg-gray-800 text-white p-4 shadow-md sticky top-0 z-10">
+    <header class="bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
       <div class="flex justify-between items-center">
         <div class="flex items-center space-x-2">
           <ToteIcon classes="w-7 h-7" />
