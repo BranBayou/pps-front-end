@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 
 export const usePickingStore = defineStore('picking', () => {
     // Lists of available totes for picking
@@ -15,7 +15,13 @@ export const usePickingStore = defineStore('picking', () => {
       { id: '9', barcode: '709518842' },
     ]);
 
+    const newPickList = reactive({
+      selectedTote: {},
+      orders: [],
+    });
+
     return {
         totes,
+        newPickList,
     };
 });

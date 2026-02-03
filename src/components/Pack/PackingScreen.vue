@@ -155,7 +155,7 @@ const handleConfirmBoxes = () => {
       <div class="flex justify-between items-center">
         <div class="flex items-center space-x-2">
           <ToteIcon classes="w-7 h-7" />
-          <span class="font-bold text-lg">Packing Tote: {{ toteId }}</span>
+          <span class="font-semibold text-lg">Packing Tote: {{ toteId }}</span>
         </div>
       </div>
     </header>
