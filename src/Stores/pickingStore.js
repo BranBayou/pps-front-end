@@ -1,3 +1,16 @@
+/**
+ * Picking Store
+ * 
+ * Manages the state and operations related to the picking process in the warehouse.
+ * This store handles:
+ * - Available totes for picking operations
+ * - Current pick list with selected tote and associated orders
+ * - Persistence of pick lists to localStorage
+ * 
+ * @module Stores/pickingStore
+ * @exports {Function} usePickingStore - Pinia store for picking operations
+ */
+
 import { defineStore } from 'pinia';
 import { reactive, ref } from 'vue';
 
@@ -20,8 +33,35 @@ export const usePickingStore = defineStore('picking', () => {
       orders: [],
     });
 
+    function addNewPickList(pickList) {
+        newPickList.selectedTote.id = pickList.selectedTote;
+        newPickList.orders = [];
+
+        for (const order of pickList.orders) {
+            newPickList.orders.push(order);
+        }
+        savePickListInLocalStorage();
+    }
+
+    function savePickListInLocalStorage() {
+        localStorage.setItem('pickList', JSON.stringify(newPickList));
+    }
+
+    function loadPickListFromLocalStorage() {
+        const storedPickList = localStorage.getItem('pickList');
+        if (storedPickList) {
+            const parsedPickList = JSON.parse(storedPickList);
+            newPickList.selectedTote = parsedPickList.selectedTote;
+            newPickList.orders = parsedPickList.orders;
+        }
+    };
+
     return {
         totes,
         newPickList,
+
+        addNewPickList,
+        savePickListInLocalStorage,
+        loadPickListFromLocalStorage,
     };
 });
