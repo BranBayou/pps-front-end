@@ -14,22 +14,12 @@ import { useAuthStore } from './Stores/authStore';
 import { useWorkflowServiceStore } from '@/Stores/workflowServiceStore';
 import { useOrderStore } from '@/Stores/orderStore';
 import { usePickingStore } from '@/Stores/pickingStore';
+import { useAppState } from '@/composables/appState';
 
 const workflowServiceStore = useWorkflowServiceStore();
 const orderStore = useOrderStore();
 const pickingStore = usePickingStore();
-
-const APP_STATES = {
-  START: 'START',
-  SCAN_TOTE: 'SCAN_TOTE',
-  LOADING: 'LOADING',
-  PICKING: 'PICKING',
-  PICKING_COMPLETE: 'PICKING_COMPLETE',
-  PACKING_START: 'PACKING_START',
-  PACKING_LOADING: 'PACKING_LOADING',
-  PACKING: 'PACKING',
-  ERROR: 'ERROR',
-};
+const { APP_STATES } = useAppState();
 
 const authStore = useAuthStore();
 
