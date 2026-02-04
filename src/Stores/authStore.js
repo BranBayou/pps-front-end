@@ -1,24 +1,35 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
+import { useToast } from 'vue-toastification';
 
 export const useAuthStore = defineStore('auth', () => {
+  const toast = useToast();
   const isAuthenticated = ref(false);
-  const showLogin = ref(true);
+
+  const userState = reactive({
+    currentUser: localStorage.getItem('currentUser') || null,
+    isAuthenticated: localStorage.getItem('isAuthenticated') === 'true' || false,
+  });
+
+  const showLogin = ref(!userState.isAuthenticated);
   const showLogout = ref(false);
-  const currentUser = ref('Dee Bak');
 
   const login = ({ user, pin }) => {
+    // Simple authentication - in real app, this would validate with backend
     if (pin.length >= 4) {
-      currentUser.value = user;
-      isAuthenticated.value = true;
+      userState.currentUser = user;
+      userState.isAuthenticated = true;
       showLogin.value = false;
+      localStorage.setItem('currentUser', user);
+      localStorage.setItem('isAuthenticated', 'true');
       return true;
     }
     return false;
   };
 
   const closeLogin = () => {
-    if (!isAuthenticated.value) {
+    // Don't allow closing login if not authenticated
+    if (!userState.isAuthenticated) {
       return;
     }
     showLogin.value = false;
@@ -29,7 +40,10 @@ export const useAuthStore = defineStore('auth', () => {
   };
 
   const logout = () => {
-    isAuthenticated.value = false;
+    userState.isAuthenticated = false;
+    userState.currentUser = null;
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('isAuthenticated');
     showLogout.value = false;
     showLogin.value = true;
     // Reset user to default
@@ -44,7 +58,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     showLogin,
     showLogout,
-    currentUser,
+    userState,
     login,
     closeLogin,
     openLogout,

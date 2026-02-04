@@ -6,7 +6,7 @@ const props = defineProps({
   isOpen: { type: Boolean, required: true },
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'logout']);
 
 const handleClose = () => {
   emit('close');

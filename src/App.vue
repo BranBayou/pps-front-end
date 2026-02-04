@@ -13,9 +13,11 @@ import { LoadingSpinner } from './components/icons/WarehouseIcons';
 import { useAuthStore } from './Stores/authStore';
 import { useWorkflowServiceStore } from '@/Stores/workflowServiceStore';
 import { useOrderStore } from '@/Stores/orderStore';
+import {usePickingStore} from '@/Stores/pickingStore';
 
 const workflowServiceStore = useWorkflowServiceStore();
 const orderStore = useOrderStore();
+const pickingStore = usePickingStore();
 
 const APP_STATES = {
   START: 'START',
@@ -68,6 +70,10 @@ const handleGoToScanTote = () => {
 const handleToteSelected = ({ toteId: selectedToteId }) => {
   toteId.value = selectedToteId;
   handleStartPicking();
+  pickingStore.addNewPickList({
+    selectedTote: selectedToteId,
+    orders: orderStore.MOCK_PICK_LIST,
+  });
 };
 
 const handleStartPicking = async () => {
@@ -178,7 +184,7 @@ const handleLogoutCancel = () => {
     <Login v-if="authStore.showLogin" @login="handleLogin" @close="handleLoginClose" />
     <Logout v-if="authStore.showLogout" @confirm="handleLogoutConfirm" @cancel="handleLogoutCancel" />
     
-    <template v-if="authStore.isAuthenticated">
+    <template v-if="authStore.userState.isAuthenticated">
       <MobileMenu :is-open="isMenuOpen" @close="closeMenu" @logout="handleLogoutClick" />
       
       <StartScreen v-if="appState === APP_STATES.START" :overview="dashboardOverview" @start="handleGoToScanTote" @open-menu="toggleMenu" />
