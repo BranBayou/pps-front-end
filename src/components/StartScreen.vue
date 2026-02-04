@@ -1,6 +1,9 @@
 <script setup>
 import { computed } from 'vue';
 import { MenuIcon, ToteIcon } from './icons/WarehouseIcons';
+import { usePickingStore } from '@/Stores/pickingStore';
+
+const pickingStore = usePickingStore();
 
 const props = defineProps({
   overview: {

@@ -12,7 +12,7 @@
  */
 
 import { defineStore } from 'pinia';
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
 export const usePickingStore = defineStore('picking', () => {
     // Lists of available totes for picking
@@ -28,37 +28,40 @@ export const usePickingStore = defineStore('picking', () => {
       { id: '9', barcode: '709518842' },
     ]);
 
-    const newPickList = reactive({
+    const pickList = reactive({
       selectedTote: {},
       orders: [],
     });
 
-    function addNewPickList(pickList) {
-        newPickList.selectedTote.id = pickList.selectedTote;
-        newPickList.orders = [];
+    function addNewPickList(newPickList) {
+        pickList.selectedTote.id = newPickList.selectedTote;
+        pickList.orders = [];
 
-        for (const order of pickList.orders) {
-            newPickList.orders.push(order);
+        for (const order of newPickList.orders) {
+            pickList.orders.push(order);
         }
         savePickListInLocalStorage();
     }
 
+    const getPickList = computed(() => pickList);
+
     function savePickListInLocalStorage() {
-        localStorage.setItem('pickList', JSON.stringify(newPickList));
+        localStorage.setItem('pickList', JSON.stringify(pickList));
     }
 
     function loadPickListFromLocalStorage() {
         const storedPickList = localStorage.getItem('pickList');
         if (storedPickList) {
             const parsedPickList = JSON.parse(storedPickList);
-            newPickList.selectedTote = parsedPickList.selectedTote;
-            newPickList.orders = parsedPickList.orders;
+            pickList.selectedTote = parsedPickList.selectedTote;
+            pickList.orders = parsedPickList.orders;
         }
     };
 
     return {
         totes,
-        newPickList,
+        pickList,
+        getPickList,
 
         addNewPickList,
         savePickListInLocalStorage,

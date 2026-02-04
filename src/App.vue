@@ -13,7 +13,7 @@ import { LoadingSpinner } from './components/icons/WarehouseIcons';
 import { useAuthStore } from './Stores/authStore';
 import { useWorkflowServiceStore } from '@/Stores/workflowServiceStore';
 import { useOrderStore } from '@/Stores/orderStore';
-import {usePickingStore} from '@/Stores/pickingStore';
+import { usePickingStore } from '@/Stores/pickingStore';
 
 const workflowServiceStore = useWorkflowServiceStore();
 const orderStore = useOrderStore();
