@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { BackspaceIcon, CheckIcon, ChevronDownIcon, ExpandIcon, LockIcon } from '../icons/WarehouseIcons';
-import { useAuthStore } from '@/Stores/authStore';
+import { useAuthStore } from '@/stores/authStore';
 
 const authStore = useAuthStore();
 

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import CompletionScreen from './CompletionScreen.vue';
 import Login from './Auth/Login.vue';
 import Logout from './Auth/Logout.vue';
@@ -9,10 +9,10 @@ import PackingScreen from './Pack/PackingScreen.vue';
 import PickingScreen from './Pick/PickingScreen.vue';
 import ScanToteScreen from './Pick/ScanToteScreen.vue';
 import { LoadingSpinner, MenuIcon, ToteIcon } from './icons/WarehouseIcons';
-import { useAuthStore } from '@/Stores/authStore';
-import { useWorkflowServiceStore } from '@/Stores/workflowServiceStore';
-import { useOrderStore } from '@/Stores/orderStore';
-import { usePickingStore } from '@/Stores/pickingStore';
+import { useAuthStore } from '@/stores/authStore';
+import { useWorkflowServiceStore } from '@/stores/workflowServiceStore';
+import { useOrderStore } from '@/stores/orderStore';
+import { usePickingStore } from '@/stores/pickingStore';
 import { useAppState } from '@/composables/appState';
 
 const workflowServiceStore = useWorkflowServiceStore();
@@ -60,10 +60,6 @@ const handleGoToScanTote = () => {
 const handleToteSelected = ({ toteId: selectedToteId }) => {
   toteId.value = selectedToteId;
   handleStartPicking();
-  pickingStore.addNewPickList({
-    selectedTote: selectedToteId,
-    orders: orderStore.MOCK_PICK_LIST,
-  });
 };
 
 const handleStartPicking = async () => {
@@ -74,11 +70,19 @@ const handleStartPicking = async () => {
   try {
     const optimizedList = await workflowServiceStore.optimizePickingRoute(orderStore.MOCK_PICK_LIST);
     pickList.value = optimizedList;
+    pickingStore.addNewPickList({
+      selectedTote: toteId.value,
+      orders: optimizedList,
+    });
     appState.value = APP_STATES.PICKING;
   } catch (err) {
     console.error('Failed to start picking job', err);
     error.value = 'Could not optimize picking route. Using default order.';
     pickList.value = [...orderStore.MOCK_PICK_LIST];
+    pickingStore.addNewPickList({
+      selectedTote: toteId.value,
+      orders: pickList.value,
+    });
     appState.value = APP_STATES.PICKING;
   }
 };
@@ -162,6 +166,18 @@ const handleLogoutConfirm = () => {
 const handleLogoutCancel = () => {
   authStore.cancelLogout();
 };
+
+onMounted(() => {
+  pickingStore.loadPickListFromLocalStorage();
+
+  if (pickingStore.pickList.orders.length > 0) {
+    pickList.value = [...pickingStore.pickList.orders];
+    if (pickingStore.pickList.selectedTote?.id) {
+      toteId.value = pickingStore.pickList.selectedTote.id;
+    }
+  }
+});
+
 </script>
 
 <template>
