@@ -12,6 +12,7 @@ export const useOrderStore = defineStore('order', () => {
         quantity: 2,
         imageUrl: 'https://images.unsplash.com/photo-1576092762791-d02d21f4a5ce?auto=format&fit=crop&w=200&q=80',
         qoh: 25,
+        isPicked: false,
       },
       {
         id: '2',
@@ -21,6 +22,7 @@ export const useOrderStore = defineStore('order', () => {
         quantity: 1,
         imageUrl: 'https://images.unsplash.com/photo-1589920038808-c1abc2439c8c?auto=format&fit=crop&w=200&q=80',
         qoh: 8,
+        isPicked: false,
       },
       {
         id: '3',
@@ -30,6 +32,7 @@ export const useOrderStore = defineStore('order', () => {
         quantity: 1,
         imageUrl: 'https://images.unsplash.com/photo-1589998059171-988d887df646?auto=format&fit=crop&w=200&q=80',
         qoh: 15,
+        isPicked: false,
       },
       {
         id: '4',
@@ -39,6 +42,7 @@ export const useOrderStore = defineStore('order', () => {
         quantity: 1,
         imageUrl: 'https://images.unsplash.com/photo-1614328898687-5a3962b3a1a3?auto=format&fit=crop&w=200&q=80',
         qoh: 32,
+        isPicked: false,
       },
       {
         id: '5',
@@ -48,6 +52,7 @@ export const useOrderStore = defineStore('order', () => {
         quantity: 3,
         imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=200&q=80',
         qoh: 12,
+        isPicked: false,
       },
       {
         id: '6',
@@ -57,6 +62,7 @@ export const useOrderStore = defineStore('order', () => {
         quantity: 1,
         imageUrl: 'https://images.unsplash.com/photo-1575364289437-fb1419d52481?auto=format&fit=crop&w=200&q=80',
         qoh: 20,
+        isPicked: false,
       },
       {
         id: '7',
@@ -66,6 +72,7 @@ export const useOrderStore = defineStore('order', () => {
         quantity: 5,
         imageUrl: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=200&q=80',
         qoh: 50,
+        isPicked: false,
       },
     ];
 

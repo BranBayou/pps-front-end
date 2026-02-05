@@ -97,7 +97,10 @@ const handleItemPicked = ({ itemId, quantity }) => {
   if (!item) return;
 
   const newPicked = Math.min(currentPicked + quantity, item.quantity);
+  item.isPicked = true;
   pickedQuantities.value[itemId] = newPicked;
+  
+  pickingStore.savePickListInLocalStorage();
 
   if (allItemsPicked.value) {
     appState.value = APP_STATES.PICKING_COMPLETE;

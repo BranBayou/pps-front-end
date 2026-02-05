@@ -97,7 +97,7 @@ const handleProgress = () => {
           :key="item.id"
           class="p-4 transition-colors cursor-pointer"
           :class="{
-            'bg-green-100 opacity-75': isItemComplete(item),
+            'bg-green-100 opacity-75': item.isPicked,
             'hover:bg-gray-100': !isItemComplete(item),
             'hover:bg-green-200': isItemComplete(item),
           }"
@@ -124,7 +124,7 @@ const handleProgress = () => {
               </div>
             </div>
 
-            <div v-if="isItemComplete(item)" class="mt-1">
+            <div v-if="item.isPicked" class="mt-1">
                 <CheckIcon classes="w-10 h-10 text-green-600" />
               </div>
 
