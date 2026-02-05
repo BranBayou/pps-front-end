@@ -12,6 +12,7 @@ const props = defineProps({
 const emit = defineEmits(['item-picked', 'back', 'progress']);
 
 const getRemainingQuantity = (item) => {
+  if (item.isPicked) return 0;
   const picked = props.pickedQuantities[item.id] || 0;
   return Math.max(0, item.quantity - picked);
 };

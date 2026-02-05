@@ -48,6 +48,7 @@ const dashboardOverview = {
 
 const allItemsPicked = computed(() => {
   return pickList.value.every((item) => {
+    if (item.isPicked) return true;
     const picked = pickedQuantities.value[item.id] || 0;
     return picked >= item.quantity;
   });
@@ -74,6 +75,7 @@ const handleStartPicking = async () => {
       selectedTote: toteId.value,
       orders: optimizedList,
     });
+    pickList.value = pickingStore.pickList.orders;
     appState.value = APP_STATES.PICKING;
   } catch (err) {
     console.error('Failed to start picking job', err);
@@ -83,6 +85,7 @@ const handleStartPicking = async () => {
       selectedTote: toteId.value,
       orders: pickList.value,
     });
+    pickList.value = pickingStore.pickList.orders;
     appState.value = APP_STATES.PICKING;
   }
 };
@@ -95,11 +98,13 @@ const handleItemPicked = ({ itemId, quantity }) => {
   const currentPicked = pickedQuantities.value[itemId] || 0;
   const item = pickList.value.find((i) => i.id === itemId);
   if (!item) return;
+  if (item.isPicked) return;
 
   const newPicked = Math.min(currentPicked + quantity, item.quantity);
-  item.isPicked = true;
   pickedQuantities.value[itemId] = newPicked;
-  
+  if (newPicked >= item.quantity) {
+    item.isPicked = true;
+  }
   pickingStore.savePickListInLocalStorage();
 
   if (allItemsPicked.value) {
@@ -174,7 +179,7 @@ onMounted(() => {
   pickingStore.loadPickListFromLocalStorage();
 
   if (pickingStore.pickList.orders.length > 0) {
-    pickList.value = [...pickingStore.pickList.orders];
+    pickList.value = pickingStore.pickList.orders;
     if (pickingStore.pickList.selectedTote?.id) {
       toteId.value = pickingStore.pickList.selectedTote.id;
     }
