@@ -1,21 +1,15 @@
-import { create_router, createWebHistory } from 'vue-router';
-import Login from '@/components/Auth/Login.vue';
-import Dashboard from '@/components/dashboard/Dashboard.vue';
+import { createRouter, createWebHistory } from 'vue-router';
+import HomeView from '@/Views/HomeView.vue';
 
 const routes = [
   {
     path: '/',
-    name: 'Login',
-    component: Login,
-  },
-  {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: Dashboard,
+    name: 'Home',
+    component: HomeView,
   },
 ];
 
-const router = create_router({
+const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });

@@ -6,11 +6,13 @@ import Toast from "vue-toastification";
 import 'vue-toastification/dist/index.css'
 import App from './App.vue';
 import api from './plugins/axios';
+import router from './router';
 
 const app = createApp(App);
 const pinia = createPinia();
 app.use(PrimeVue);
 app.use(pinia);
+app.use(router);
 app.config.globalProperties.$api = api;
 app.use(Toast, {
   position: 'bottom-left',

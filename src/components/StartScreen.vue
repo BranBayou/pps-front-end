@@ -1,75 +1,310 @@
 <script setup>
-import { computed } from 'vue';
-import { MenuIcon, ToteIcon } from './icons/WarehouseIcons';
+import { computed, ref } from 'vue';
+import CompletionScreen from './CompletionScreen.vue';
+import Login from './Auth/Login.vue';
+import Logout from './Auth/Logout.vue';
+import MobileMenu from './MobileMenu.vue';
+import PackingStartScreen from './Pack/PackingStartScreen.vue';
+import PackingScreen from './Pack/PackingScreen.vue';
+import PickingScreen from './Pick/PickingScreen.vue';
+import ScanToteScreen from './Pick/ScanToteScreen.vue';
+import { LoadingSpinner, MenuIcon, ToteIcon } from './icons/WarehouseIcons';
+import { useAuthStore } from '@/Stores/authStore';
+import { useWorkflowServiceStore } from '@/Stores/workflowServiceStore';
+import { useOrderStore } from '@/Stores/orderStore';
 import { usePickingStore } from '@/Stores/pickingStore';
+import { useAppState } from '@/composables/appState';
 
+const workflowServiceStore = useWorkflowServiceStore();
+const orderStore = useOrderStore();
 const pickingStore = usePickingStore();
+const { APP_STATES } = useAppState();
 
-const props = defineProps({
-  overview: {
-    type: Object,
-    required: true,
+const authStore = useAuthStore();
+
+const appState = ref(APP_STATES.START);
+const toteId = ref('');
+const pickList = ref([]);
+const pickedQuantities = ref({});
+const packingInstructions = ref(null);
+const error = ref('');
+const isMenuOpen = ref(false);
+
+const greeting = 'Welcome, Gorilla Warehouse!';
+const dashboardOverview = {
+  userName: 'Valerie Cancian',
+  filterStatus: 'Pending',
+  warehouseName: 'Primary',
+  orders: {
+    readyToShip: 25,
+    dueToday: 4,
+    shippedToday: 5,
   },
+  items: {
+    readyToPick: 57,
+    dueToday: 7,
+    shippedToday: 16,
+  },
+};
+
+const allItemsPicked = computed(() => {
+  return pickList.value.every((item) => {
+    const picked = pickedQuantities.value[item.id] || 0;
+    return picked >= item.quantity;
+  });
 });
 
-const emit = defineEmits(['start', 'open-menu']);
+const handleGoToScanTote = () => {
+  appState.value = APP_STATES.SCAN_TOTE;
+};
 
-const greeting = computed(() => `Welcome, Gorilla Warehouse!`);
+const handleToteSelected = ({ toteId: selectedToteId }) => {
+  toteId.value = selectedToteId;
+  handleStartPicking();
+  pickingStore.addNewPickList({
+    selectedTote: selectedToteId,
+    orders: orderStore.MOCK_PICK_LIST,
+  });
+};
+
+const handleStartPicking = async () => {
+  appState.value = APP_STATES.LOADING;
+  error.value = '';
+  pickedQuantities.value = {};
+
+  try {
+    const optimizedList = await workflowServiceStore.optimizePickingRoute(orderStore.MOCK_PICK_LIST);
+    pickList.value = optimizedList;
+    appState.value = APP_STATES.PICKING;
+  } catch (err) {
+    console.error('Failed to start picking job', err);
+    error.value = 'Could not optimize picking route. Using default order.';
+    pickList.value = [...orderStore.MOCK_PICK_LIST];
+    appState.value = APP_STATES.PICKING;
+  }
+};
+
+const handleScanToteBack = () => {
+  appState.value = APP_STATES.START;
+};
+
+const handleItemPicked = ({ itemId, quantity }) => {
+  const currentPicked = pickedQuantities.value[itemId] || 0;
+  const item = pickList.value.find((i) => i.id === itemId);
+  if (!item) return;
+
+  const newPicked = Math.min(currentPicked + quantity, item.quantity);
+  pickedQuantities.value[itemId] = newPicked;
+
+  if (allItemsPicked.value) {
+    appState.value = APP_STATES.PICKING_COMPLETE;
+  }
+};
+
+const handlePickingBack = () => {
+  appState.value = APP_STATES.SCAN_TOTE;
+};
+
+const handlePickingProgress = () => {
+  console.log('Progress clicked');
+};
+
+const handleProceedToPacking = () => {
+  appState.value = APP_STATES.PACKING_START;
+};
+
+const handleStartPacking = async () => {
+  appState.value = APP_STATES.PACKING_LOADING;
+  try {
+    packingInstructions.value = await workflowServiceStore.getPackingInstructions(pickList.value);
+    appState.value = APP_STATES.PACKING;
+  } catch (err) {
+    console.error('Failed to get packing instructions', err);
+    error.value = 'Could not retrieve packing instructions.';
+    appState.value = APP_STATES.ERROR;
+  }
+};
+
+const handleRestart = () => {
+  appState.value = APP_STATES.START;
+  toteId.value = '';
+  pickList.value = [];
+  pickedQuantities.value = {};
+  error.value = '';
+  packingInstructions.value = null;
+};
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
+};
+
+const closeMenu = () => {
+  isMenuOpen.value = false;
+};
+
+const handleLogin = ({ user, pin }) => {
+  authStore.login({ user, pin });
+};
+
+const handleLoginClose = () => {
+  authStore.closeLogin();
+};
+
+const handleLogoutClick = () => {
+  isMenuOpen.value = false;
+  authStore.openLogout();
+};
+
+const handleLogoutConfirm = () => {
+  authStore.logout();
+  appState.value = APP_STATES.START;
+  handleRestart();
+};
+
+const handleLogoutCancel = () => {
+  authStore.cancelLogout();
+};
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 flex items-center justify-center p-4 relative">
-    <button
-      type="button"
-      class="absolute top-4 right-4 p-3 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors z-10"
-      @click="emit('open-menu')"
-    >
-      <MenuIcon classes="w-6 h-6 text-gray-700" />
-    </button>
-    <div class="w-full max-w-3xl space-y-6">
-      <div class="bg-white rounded-3xl shadow-lg p-8">
-        <!-- <p class="text-sm text-gray-500">
-          These are your orders for
-          <span class="text-indigo-600 font-semibold cursor-pointer">{{ overview.filterStatus }}</span>
-          status in
-          <span class="text-indigo-600 font-semibold cursor-pointer">{{ overview.warehouseName }}</span>
-          warehouse
-        </p> -->
-        <h1 class="text-3xl font-bold text-gray-900 mt-2">{{ greeting }}</h1>
+  <div class="h-screen md:max-w-3xl md:mx-auto md:shadow-lg bg-gray-50 text-gray-900">
+    <Login v-if="authStore.showLogin" @login="handleLogin" @close="handleLoginClose" />
+    <Logout v-if="authStore.showLogout" @confirm="handleLogoutConfirm" @cancel="handleLogoutCancel" />
 
-        <div class="mt-6 grid grid-cols-2 gap-6">
-          <div class="border border-slate-200 rounded-2xl p-6">
-            <h2 class="text-sm uppercase tracking-wide text-slate-500">Orders</h2>
-            <div class="mt-4 space-y-2 text-slate-700">
-              <p><span class="text-3xl font-bold text-slate-900">{{ overview.orders.readyToShip }}</span> ready to ship</p>
-              <p><span class="font-semibold text-slate-900">{{ overview.orders.dueToday }}</span> due today</p>
-              <p><span class="font-semibold text-slate-900">{{ overview.orders.shippedToday }}</span> shipped today</p>
+    <template v-if="authStore.userState.isAuthenticated">
+      <MobileMenu :is-open="isMenuOpen" @close="closeMenu" @logout="handleLogoutClick" />
+
+      <ScanToteScreen
+        v-if="appState === APP_STATES.SCAN_TOTE"
+        @select-tote="handleToteSelected"
+        @back="handleScanToteBack"
+      />
+
+      <div
+        v-else-if="appState === APP_STATES.LOADING"
+        class="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-gray-700"
+      >
+        <LoadingSpinner classes="w-16 h-16 text-indigo-500" />
+        <p class="text-xl font-semibold mt-4">Optimizing pick route...</p>
+      </div>
+
+      <PickingScreen
+        v-else-if="appState === APP_STATES.PICKING && pickList.length > 0"
+        :tote-id="toteId"
+        :pick-list="pickList"
+        :picked-quantities="pickedQuantities"
+        @item-picked="handleItemPicked"
+        @back="handlePickingBack"
+        @progress="handlePickingProgress"
+      />
+
+      <div v-else-if="appState === APP_STATES.PICKING" class="flex items-center justify-center h-screen">
+        No items to pick.
+      </div>
+
+      <CompletionScreen
+        v-else-if="appState === APP_STATES.PICKING_COMPLETE"
+        :tote-id="toteId"
+        :total-items="pickList.length"
+        @proceed="handleProceedToPacking"
+      />
+
+      <PackingStartScreen
+        v-else-if="appState === APP_STATES.PACKING_START"
+        :tote-id="toteId"
+        @begin-packing="handleStartPacking"
+      />
+
+      <div
+        v-else-if="appState === APP_STATES.PACKING_LOADING"
+        class="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-gray-700"
+      >
+        <LoadingSpinner classes="w-16 h-16 text-indigo-500" />
+        <p class="text-xl font-semibold mt-4">Generating packing instructions...</p>
+      </div>
+
+      <PackingScreen
+        v-else-if="appState === APP_STATES.PACKING && packingInstructions"
+        :tote-id="toteId"
+        :pick-list="pickList"
+        :instructions="packingInstructions"
+        @packing-complete="handleRestart"
+      />
+
+      <div
+        v-else-if="appState === APP_STATES.ERROR"
+        class="flex flex-col items-center justify-center min-h-screen bg-red-50 p-4 text-center"
+      >
+        <p class="text-red-600 font-semibold">{{ error }}</p>
+        <button
+          type="button"
+          class="mt-4 bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg"
+          @click="handleRestart"
+        >
+          Start Over
+        </button>
+      </div>
+
+      <div v-else class="min-h-screen bg-gray-50 flex items-center justify-center p-4 relative">
+        <button
+          type="button"
+          class="absolute top-4 right-4 p-3 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors z-10"
+          @click="toggleMenu"
+        >
+          <MenuIcon classes="w-6 h-6 text-gray-700" />
+        </button>
+        <div class="w-full max-w-3xl space-y-6">
+          <div class="bg-white rounded-3xl shadow-lg p-8">
+            <!-- <p class="text-sm text-gray-500">
+              These are your orders for
+              <span class="text-indigo-600 font-semibold cursor-pointer">{{ dashboardOverview.filterStatus }}</span>
+              status in
+              <span class="text-indigo-600 font-semibold cursor-pointer">{{ dashboardOverview.warehouseName }}</span>
+              warehouse
+            </p> -->
+            <h1 class="text-3xl font-bold text-gray-900 mt-2">{{ greeting }}</h1>
+
+            <div class="mt-6 grid grid-cols-2 gap-6">
+              <div class="border border-slate-200 rounded-2xl p-6">
+                <h2 class="text-sm uppercase tracking-wide text-slate-500">Orders</h2>
+                <div class="mt-4 space-y-2 text-slate-700">
+                  <p>
+                    <span class="text-3xl font-bold text-slate-900">{{ dashboardOverview.orders.readyToShip }}</span>
+                    ready to ship
+                  </p>
+                  <p><span class="font-semibold text-slate-900">{{ dashboardOverview.orders.dueToday }}</span> due today</p>
+                  <p><span class="font-semibold text-slate-900">{{ dashboardOverview.orders.shippedToday }}</span> shipped today</p>
+                </div>
+              </div>
+
+              <div class="border border-slate-200 rounded-2xl p-6">
+                <h2 class="text-sm uppercase tracking-wide text-slate-500">Items</h2>
+                <div class="mt-4 space-y-2 text-slate-700">
+                  <p>
+                    <span class="text-3xl font-bold text-slate-900">{{ dashboardOverview.items.readyToPick }}</span>
+                    ready to pick
+                  </p>
+                  <p><span class="font-semibold text-slate-900">{{ dashboardOverview.items.dueToday }}</span> due today</p>
+                  <p><span class="font-semibold text-slate-900">{{ dashboardOverview.items.shippedToday }}</span> shipped today</p>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="border border-slate-200 rounded-2xl p-6">
-            <h2 class="text-sm uppercase tracking-wide text-slate-500">Items</h2>
-            <div class="mt-4 space-y-2 text-slate-700">
-              <p><span class="text-3xl font-bold text-slate-900">{{ overview.items.readyToPick }}</span> ready to pick</p>
-              <p><span class="font-semibold text-slate-900">{{ overview.items.dueToday }}</span> due today</p>
-              <p><span class="font-semibold text-slate-900">{{ overview.items.shippedToday }}</span> shipped today</p>
-            </div>
+          <div class="p-6 text-center">
+            <!-- <p class="text-slate-600 text-lg font-medium mb-6">How would you like to process them?</p> -->
+            <button
+              type="button"
+              class="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 rounded-2xl bg-purple-600 text-white text-lg font-semibold shadow-lg shadow-purple-200 hover:bg-purple-700 transition-transform hover:-translate-y-0.5"
+              @click="handleGoToScanTote"
+            >
+              <ToteIcon classes="w-6 h-6 text-white mr-3" />
+              Start New Picking
+            </button>
           </div>
         </div>
       </div>
-
-      <div class="p-6 text-center">
-        <!-- <p class="text-slate-600 text-lg font-medium mb-6">How would you like to process them?</p> -->
-        <button
-          type="button"
-          class="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 rounded-2xl bg-purple-600 text-white text-lg font-semibold shadow-lg shadow-purple-200 hover:bg-purple-700 transition-transform hover:-translate-y-0.5"
-          @click="emit('start')"
-        >
-          <ToteIcon classes="w-6 h-6 text-white mr-3" />
-          Start New Picking
-        </button>
-      </div>
-    </div>
+    </template>
   </div>
 </template>
 
