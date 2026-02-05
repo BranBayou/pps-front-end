@@ -18,11 +18,10 @@ import { useAppState } from '@/composables/appState';
 const workflowServiceStore = useWorkflowServiceStore();
 const orderStore = useOrderStore();
 const pickingStore = usePickingStore();
-const { APP_STATES } = useAppState();
+const { APP_STATES, appState, resetAppState } = useAppState();
 
 const authStore = useAuthStore();
-
-const appState = ref(APP_STATES.START);
+ 
 const toteId = ref('');
 const pickList = ref([]);
 const pickedQuantities = ref({});
@@ -126,7 +125,7 @@ const handleStartPacking = async () => {
 };
 
 const handleRestart = () => {
-  appState.value = APP_STATES.START;
+  resetAppState();
   toteId.value = '';
   pickList.value = [];
   pickedQuantities.value = {};
@@ -157,7 +156,6 @@ const handleLogoutClick = () => {
 
 const handleLogoutConfirm = () => {
   authStore.logout();
-  appState.value = APP_STATES.START;
   handleRestart();
 };
 
