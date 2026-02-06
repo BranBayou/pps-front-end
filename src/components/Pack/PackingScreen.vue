@@ -162,7 +162,7 @@ const handleConfirmBoxes = () => {
 
     <main class="flex-grow p-4 md:p-6 overflow-y-auto">
       <div class="bg-white p-5 rounded-2xl shadow mb-6">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">
           Recommended Boxes ({{ instructions.boxes.length }})
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -185,7 +185,7 @@ const handleConfirmBoxes = () => {
 
       <div class="grid grid-cols-1">
         <div class="bg-white p-5 rounded-2xl shadow">
-          <h2 class="text-xl font-bold text-gray-800 mb-3">Item Packing List</h2>
+          <h2 class="text-lg font-bold text-gray-800 mb-3">Item Packing List</h2>
           <div class="space-y-3 max-h-96 overflow-y-auto pr-2">
             <div
               v-for="(item, index) in pickList"
@@ -197,7 +197,7 @@ const handleConfirmBoxes = () => {
                   ? ['bg-yellow-100', BOX_COLORS[(skuToBoxIndexMap.get(item.sku) ?? 0) % BOX_COLORS.length], 'ring-4 ring-yellow-300']
                   : '',
                 index > packedItemIndex || packingStep !== 'packing'
-                  ? ['bg-gray-100', BOX_COLORS[(skuToBoxIndexMap.get(item.sku) ?? 0) % BOX_COLORS.length]]
+                  ? ['bg-gray-50', BOX_COLORS[(skuToBoxIndexMap.get(item.sku) ?? 0) % BOX_COLORS.length]]
                   : '',
               ]"
             >
