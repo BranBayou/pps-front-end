@@ -9,11 +9,11 @@ import PackingScreen from './Pack/PackingScreen.vue';
 import PickingScreen from './Pick/PickingScreen.vue';
 import ScanToteScreen from './Pick/ScanToteScreen.vue';
 import { LoadingSpinner, MenuIcon, ToteIcon } from './icons/WarehouseIcons';
-import { useAuthStore } from '../stores/authStore';
-import { useWorkflowServiceStore } from '../stores/workflowServiceStore';
-import { useOrderStore } from '../stores/orderStore';
-import { usePickingStore } from '../stores/pickingStore';
-import { useAppState } from '../composables/appState';
+import { useAuthStore } from '@/stores/authStore';
+import { useWorkflowServiceStore } from '@/stores/workflowServiceStore';
+import { useOrderStore } from '@/stores/orderStore';
+import { usePickingStore } from '@/stores/pickingStore';
+import { useAppState } from '@/composables/appState';
 
 const workflowServiceStore = useWorkflowServiceStore();
 const orderStore = useOrderStore();
