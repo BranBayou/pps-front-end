@@ -2,6 +2,7 @@ import Quagga from 'quagga';
 
 let isInitialized = false;
 let detectedHandler = null;
+let processedHandler = null;
 
 const init = (target) =>
   new Promise((resolve, reject) => {
@@ -19,7 +20,14 @@ const init = (target) =>
         decoder: {
           readers: ['code_128_reader'],
         },
+        locator: {
+          patchSize: 'medium',
+          halfSample: true,
+        },
         locate: true,
+        numOfWorkers: navigator.hardwareConcurrency
+          ? Math.max(1, Math.floor(navigator.hardwareConcurrency / 2))
+          : 2,
       },
       (error) => {
         if (error) {
@@ -32,7 +40,7 @@ const init = (target) =>
     );
   });
 
-const start = async ({ target, onDetected }) => {
+const start = async ({ target, onDetected, onProcessed }) => {
   if (!target) {
     throw new Error('Scanner target element not available.');
   }
@@ -43,11 +51,22 @@ const start = async ({ target, onDetected }) => {
 
   if (detectedHandler) {
     Quagga.offDetected(detectedHandler);
+    detectedHandler = null;
+  }
+
+  if (processedHandler) {
+    Quagga.offProcessed(processedHandler);
+    processedHandler = null;
   }
 
   if (onDetected) {
     detectedHandler = (result) => onDetected(result);
     Quagga.onDetected(detectedHandler);
+  }
+
+  if (onProcessed) {
+    processedHandler = (result) => onProcessed(result);
+    Quagga.onProcessed(processedHandler);
   }
 
   Quagga.start();
@@ -58,8 +77,13 @@ const stop = () => {
     Quagga.offDetected(detectedHandler);
     detectedHandler = null;
   }
+  if (processedHandler) {
+    Quagga.offProcessed(processedHandler);
+    processedHandler = null;
+  }
   if (isInitialized) {
     Quagga.stop();
+    isInitialized = false;
   }
 };
 

@@ -11,6 +11,7 @@ const pickingStore = usePickingStore();
 const isScanning = ref(false);
 const scannerError = ref('');
 const scannerTarget = ref(null);
+const lastDetected = ref('');
 
 const filteredTotes = computed(() => {
   const q = searchQuery.value.trim().toLowerCase();
@@ -34,6 +35,8 @@ const stopScanner = () => {
   isScanning.value = false;
 };
 
+const normalizeBarcode = (value) => String(value || '').trim();
+
 const startScanner = async () => {
   scannerError.value = '';
   isScanning.value = true;
@@ -44,10 +47,63 @@ const startScanner = async () => {
     await barcodeScannerService.start({
       target: scannerTarget.value,
       onDetected: (result) => {
-        const code = result?.codeResult?.code;
+        const code = normalizeBarcode(result?.codeResult?.code);
         if (!code) return;
+        lastDetected.value = code;
+        const matchingTote = pickingStore.totes.find(
+          (tote) => normalizeBarcode(tote.barcode) === code
+        );
+        if (matchingTote) {
+          selectTote(matchingTote);
+          stopScanner();
+          return;
+        }
         searchQuery.value = code;
-        stopScanner();
+      },
+      onProcessed: (result) => {
+        const drawingCanvas = document.querySelector(
+          '.scanner-preview canvas.drawingBuffer'
+        );
+        if (!drawingCanvas || !result) return;
+        const ctx = drawingCanvas.getContext('2d');
+        if (!ctx) return;
+        ctx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+        if (result.boxes) {
+          result.boxes
+            .filter((box) => box !== result.box)
+            .forEach((box) => {
+              ctx.strokeStyle = 'rgba(0, 0, 255, 0.4)';
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.moveTo(box[0][0], box[0][1]);
+              box.forEach((point, index) => {
+                if (index === 0) return;
+                ctx.lineTo(point[0], point[1]);
+              });
+              ctx.closePath();
+              ctx.stroke();
+            });
+        }
+        if (result.box) {
+          ctx.strokeStyle = 'rgba(0, 255, 0, 0.6)';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(result.box[0][0], result.box[0][1]);
+          result.box.forEach((point, index) => {
+            if (index === 0) return;
+            ctx.lineTo(point[0], point[1]);
+          });
+          ctx.closePath();
+          ctx.stroke();
+        }
+        if (result.codeResult && result.codeResult.code) {
+          ctx.strokeStyle = 'rgba(255, 0, 0, 0.9)';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(result.line[0].x, result.line[0].y);
+          ctx.lineTo(result.line[1].x, result.line[1].y);
+          ctx.stroke();
+        }
       },
     });
   } catch (error) {
@@ -106,13 +162,16 @@ onUnmounted(() => {
         </button>
       </div>
       <p v-if="scannerError" class="text-sm text-red-600">{{ scannerError }}</p>
+      <p v-if="lastDetected" class="text-xs text-gray-500">
+        Last detected: {{ lastDetected }}
+      </p>
     </div>
 
     <main class="flex-1 overflow-y-auto">
       <div v-if="isScanning" class="p-4">
         <div
           ref="scannerTarget"
-          class="w-full h-64 rounded-2xl overflow-hidden bg-gray-900 flex items-center justify-center text-white"
+          class="scanner-preview w-full h-64 rounded-2xl overflow-hidden bg-gray-900 flex items-center justify-center text-white"
         >
           Starting camera...
         </div>
