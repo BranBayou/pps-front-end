@@ -169,15 +169,13 @@ const handleConfirmBoxes = () => {
           <div
             v-for="(box, index) in instructions.boxes"
             :key="box.boxSize + index"
-            class="bg-purple-50 border-l-8 rounded-lg p-4 flex items-start space-x-4"
+            class="bg-purple-50 border-l-8 rounded-lg p-4 flex items-center space-x-4"
             :class="BOX_COLORS[index % BOX_COLORS.length]"
           >
             <BoxIcon classes="w-10 h-10 text-purple-500 mt-1 flex-shrink-0" />
             <div>
               <p class="text-lg font-bold text-purple-900">{{ box.boxSize }} Box</p>
-              <p class="text-sm text-gray-700">
-                {{ box.contents }}
-              </p>
+              <!-- <p class="text-sm text-gray-700">{{ box.contents }}</p> -->
             </div>
           </div>
         </div>
