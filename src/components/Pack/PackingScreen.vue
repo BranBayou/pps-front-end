@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
 import { BoxIcon, CheckIcon, InformationCircleIcon, LoadingSpinner, ToteIcon, TruckIcon, XIcon } from '../../components/icons/WarehouseIcons';
+import ConfirmBoxesPopup from './ConfirmBoxesPopup.vue';
 import { useShippingServiceStore } from '../../stores/shippingServiceStore';
 
 const shippingServiceStore = useShippingServiceStore();
@@ -319,70 +320,6 @@ const handleConfirmBoxes = () => {
         </div>
       </div>
 
-      <div v-else-if="packingStep === 'confirming_boxes'" class="w-full">
-        <h3 class="text-xl font-bold mb-4 text-gray-800 text-center">Confirm Boxes & Weights</h3>
-        <p class="text-gray-600 mb-6 text-center">Please confirm which boxes you used and enter the weight of each box with items inside.</p>
-        <div class="space-y-4 mb-6 max-h-64 overflow-y-auto">
-          <div
-            v-for="(box, index) in confirmedBoxes"
-            :key="index"
-            class="bg-white border-2 rounded-xl p-4"
-            :class="box.confirmed ? 'border-purple-500 bg-purple-50' : 'border-gray-200 bg-gray-50'"
-          >
-            <div class="flex items-start justify-between mb-3">
-              <div class="flex items-start space-x-3 flex-1">
-                <BoxIcon classes="w-8 h-8 text-purple-500 mt-1 flex-shrink-0" />
-                <div class="flex-1">
-                  <p class="text-lg font-bold text-gray-900">{{ box.boxSize }} Box</p>
-                  <p class="text-sm text-gray-600 mt-1">{{ box.contents }}</p>
-                </div>
-              </div>
-              <label class="flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  :checked="box.confirmed"
-                  @change="toggleBoxConfirmation(index)"
-                  class="h-5 w-5 rounded border-gray-300 text-purple-600 accent-purple-600 focus:ring-purple-500 checked:bg-purple-600"
-                />
-                <span class="ml-2 text-sm font-medium text-gray-700">Used</span>
-              </label>
-            </div>
-            <div v-if="box.confirmed" class="mt-3">
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Weight (lbs):
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                min="0.1"
-                :value="boxWeights[box.index] || ''"
-                @input="updateBoxWeight(index, $event.target.value)"
-                placeholder="Enter weight"
-                class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-lg font-semibold"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="flex items-center space-x-4">
-          <button
-            type="button"
-            class="w-1/3 bg-gray-200 text-gray-800 font-bold py-5 px-6 rounded-xl text-lg hover:bg-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-300"
-            @click="packingStep = 'packing'"
-          >
-            Back
-          </button>
-          <button
-            type="button"
-            class="w-2/3 flex items-center justify-center space-x-3 bg-purple-600 text-white font-bold py-5 px-6 rounded-xl text-xl transition-all disabled:bg-gray-400 disabled:cursor-not-allowed enabled:hover:bg-purple-700 enabled:focus:outline-none enabled:focus:ring-4 enabled:focus:ring-purple-300 enabled:hover:scale-105"
-            :disabled="!canProceedToCourier"
-            @click="handleConfirmBoxes"
-          >
-            <CheckIcon classes="w-6 h-6" />
-            <span>Confirm & Continue</span>
-          </button>
-        </div>
-      </div>
-
       <div v-else-if="packingStep === 'selecting_courier'" class="text-center w-full">
         <h3 class="text-xl font-bold mb-4 text-gray-800">Packing Complete!</h3>
         <p class="text-gray-600 mb-6">Please select a courier to get shipping rates.</p>
@@ -461,6 +398,18 @@ const handleConfirmBoxes = () => {
         <p class="text-lg">Tote {{ toteId }} is ready for dispatch.</p>
       </div>
     </footer>
+
+    <ConfirmBoxesPopup
+      :show="packingStep === 'confirming_boxes'"
+      :confirmed-boxes="confirmedBoxes"
+      :box-weights="boxWeights"
+      :can-proceed="canProceedToCourier"
+      @toggle-box="toggleBoxConfirmation"
+      @update-weight="updateBoxWeight"
+      @confirm="handleConfirmBoxes"
+      @back="packingStep = 'packing'"
+      @close="packingStep = 'packing'"
+    />
   </div>
 </template>
 
