@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
 import { BoxIcon, CheckIcon, InformationCircleIcon, LoadingSpinner, ToteIcon, TruckIcon, XIcon } from '../../components/icons/WarehouseIcons';
-import { useShippingServiceStore } from '@/stores/shippingServiceStore';
+import { useShippingServiceStore } from '../../stores/shippingServiceStore';
 
 const shippingServiceStore = useShippingServiceStore();
 
