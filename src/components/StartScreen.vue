@@ -1,8 +1,8 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import CompletionScreen from './CompletionScreen.vue';
-import Login from './Auth/Login.vue';
-import Logout from './Auth/Logout.vue';
+import Login from './auth/Login.vue';
+import Logout from './auth/Logout.vue';
 import MobileMenu from './MobileMenu.vue';
 import PackingStartScreen from './Pack/PackingStartScreen.vue';
 import PackingScreen from './Pack/PackingScreen.vue';
