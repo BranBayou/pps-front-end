@@ -37,6 +37,19 @@ const stopScanner = () => {
 
 const normalizeBarcode = (value) => String(value || '').trim();
 
+const handleSearchEnter = () => {
+  const code = normalizeBarcode(searchQuery.value);
+  if (!code) return;
+  const matchingTote = pickingStore.totes.find((tote) => {
+    const barcode = normalizeBarcode(tote.barcode);
+    const id = String(tote.id || '').trim().toLowerCase();
+    return barcode === code || id === code.toLowerCase();
+  });
+  if (matchingTote) {
+    selectTote(matchingTote);
+  }
+};
+
 const startScanner = async () => {
   scannerError.value = '';
   isScanning.value = true;
@@ -141,6 +154,7 @@ onUnmounted(() => {
           type="text"
           placeholder="Search totes..."
           class="w-full pl-10 pr-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
+          @keyup.enter="handleSearchEnter"
         />
       </div>
       <div class="flex items-center gap-3">
@@ -176,7 +190,7 @@ onUnmounted(() => {
           Starting camera...
         </div>
       </div>
-      <ul class="divide-y divide-gray-200">
+      <!-- <ul class="divide-y divide-gray-200">
         <li
           v-for="tote in filteredTotes"
           :key="tote.id"
@@ -192,7 +206,7 @@ onUnmounted(() => {
             <p class="text-sm text-gray-500 mt-0.5">Barcode {{ tote.barcode }}</p>
           </div>
         </li>
-      </ul>
+      </ul> -->
       <p
         class="p-6 text-center text-gray-500"
         v-if="filteredTotes.length === 0"

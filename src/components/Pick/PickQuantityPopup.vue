@@ -62,9 +62,13 @@ function handleClose() {
           aria-labelledby="pick-popup-title"
           aria-modal="true"
         >
-          <div class="p-4 border-b border-gray-200 bg-gray-50">
-            <p id="pick-popup-title" class="text-lg font-bold text-gray-900">{{ item.name }}</p>
-            <p class="text-sm text-gray-500 mt-0.5">SKU: {{ item.sku }}</p>
+          <div class="flex p-4 border-b border-gray-200 bg-gray-50">
+            <div class="">
+              <p id="pick-popup-title" class="text-lg font-bold text-gray-900">{{ item.name }}</p>
+              <p class="text-sm text-gray-500 mt-0.5">Barcode: {{ item.barcode }}</p>
+              <p class="text-sm text-gray-500 mt-0.5">SKU: {{ item.sku }}</p>
+            </div>
+            <img :src="item.imageUrl" alt="Item Image" class="w-32 h-32 object-cover rounded-lg mt-2">
           </div>
 
           <div class="p-5 space-y-4">
@@ -111,7 +115,7 @@ function handleClose() {
               class="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold text-lg rounded-xl transition-colors focus:outline-none focus:ring-4 focus:ring-purple-300"
               @click="handleConfirm"
             >
-              Confirm
+              Pick
             </button>
           </div>
         </div>

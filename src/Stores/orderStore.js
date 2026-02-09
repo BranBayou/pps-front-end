@@ -6,6 +6,7 @@ export const useOrderStore = defineStore('order', () => {
     const MOCK_PICK_LIST = [
       {
         id: '1',
+        barcode: '5454343544',
         sku: 'HD-GGB-01',
         name: 'Premium Green Tea',
         bin: 'C-03-B',
@@ -17,6 +18,7 @@ export const useOrderStore = defineStore('order', () => {
       },
       {
         id: '2',
+        barcode: '5454343545',
         sku: 'SF-RB-12',
         name: 'Robot Vacuum Cleaner',
         bin: 'A-01-A',
@@ -28,6 +30,7 @@ export const useOrderStore = defineStore('order', () => {
       },
       {
         id: '3',
+        barcode: '5454343546',
         sku: 'BK-NF-45',
         name: 'The Silent Patient',
         bin: 'D-11-F',
@@ -39,6 +42,7 @@ export const useOrderStore = defineStore('order', () => {
       },
       {
         id: '4',
+        barcode: '5454343547',
         sku: 'KT-KN-08',
         name: "Chef's Knife 8-inch",
         bin: 'A-02-C',
@@ -50,6 +54,7 @@ export const useOrderStore = defineStore('order', () => {
       },
       {
         id: '5',
+        barcode: '5454343548',
         sku: 'EL-HP-23',
         name: 'Noise-Cancelling Headphones',
         bin: 'B-07-D',
@@ -61,6 +66,7 @@ export const useOrderStore = defineStore('order', () => {
       },
       {
         id: '6',
+        barcode: '5454343549',
         sku: 'TO-LG-99',
         name: 'Dinosaur Building Blocks',
         bin: 'C-04-A',
@@ -72,6 +78,7 @@ export const useOrderStore = defineStore('order', () => {
       },
       {
         id: '7',
+        barcode: '5454343550',
         sku: 'SP-WB-32',
         name: 'Insulated Water Bottle',
         bin: 'B-05-E',
