@@ -62,7 +62,7 @@ function handleClose() {
           aria-labelledby="pick-popup-title"
           aria-modal="true"
         >
-          <div class="flex p-4 border-b border-gray-200 bg-gray-50">
+          <div class="flex justify-between p-4 border-b border-gray-200 bg-gray-50">
             <div class="">
               <p id="pick-popup-title" class="text-lg font-bold text-gray-900">{{ item.name }}</p>
               <p class="text-sm text-gray-500 mt-0.5">Barcode: {{ item.barcode }}</p>
