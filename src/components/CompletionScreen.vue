@@ -6,7 +6,7 @@ defineProps({
   totalItems: { type: Number, required: true },
 });
 
-const emit = defineEmits(['proceed', 'menu']);
+const emit = defineEmits(['proceed', 'menu', 'start-new-picking']);
 
 const handleMenu = () => {
   emit('menu');
@@ -35,13 +35,23 @@ const handleMenu = () => {
         <span class="font-bold">{{ toteId }}</span>.
       </p>
       <p class="text-gray-600 mb-8">Please deliver the tote to the packing station.</p>
-      <button
-        type="button"
-        class="w-full bg-purple-600 text-white font-bold py-4 px-6 rounded-xl text-lg hover:bg-purple-700 focus:outline-none focus:ring-4 focus:ring-purple-300 transition-transform hover:scale-105"
-        @click="emit('proceed')"
-      >
-        Proceed to Packing
-      </button>
+      <div class="flex flex-col space-y-4">
+        <button
+          type="button"
+          class="w-full bg-purple-600 text-white font-bold py-4 px-6 rounded-xl text-lg hover:bg-purple-700 focus:outline-none focus:ring-4 focus:ring-purple-300 transition-transform hover:scale-105"
+          @click="emit('proceed')"
+        >
+          Proceed to Packing
+        </button>
+        <button
+          type="button"
+          class="w-full bg-gray-600 text-white font-bold py-4 px-6 rounded-xl text-lg hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-transform hover:scale-105"
+          @click="emit('start-new-picking')"
+        >
+          <ToteIcon classes="w-6 h-6 text-white mr-3" />
+          Start New Picking
+        </button>
+      </div>
       </div>
     </main>
   </div>

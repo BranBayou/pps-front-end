@@ -47,6 +47,7 @@ const dashboardOverview = {
 
 const handleGoToScanTote = () => {
   appState.value = APP_STATES.SCAN_TOTE;
+  localStorage.removeItem('pickList');
 };
 
 const handleToteSelected = ({ toteId: selectedToteId }) => {
@@ -210,6 +211,7 @@ onMounted(() => {
         :tote-id="toteId"
         :total-items="pickList.length"
         @proceed="handleProceedToPacking"
+        @start-new-picking="handleGoToScanTote"
         @menu="toggleMenu"
       />
 
