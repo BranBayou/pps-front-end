@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue';
-import { ArrowLeftIcon, CheckIcon, ToteIcon } from '../icons/WarehouseIcons';
+import { ArrowLeftIcon, CheckIcon, MenuIcon, ToteIcon } from '../icons/WarehouseIcons';
 import PickQuantityPopup from './PickQuantityPopup.vue';
 
 const props = defineProps({
@@ -9,7 +9,7 @@ const props = defineProps({
   pickedQuantities: { type: Object, default: () => ({}) },
 });
 
-const emit = defineEmits(['item-picked', 'back', 'progress']);
+const emit = defineEmits(['item-picked', 'back', 'progress', 'menu']);
 
 const getRemainingQuantity = (item) => {
   if (item.isPicked) return 0;
@@ -69,6 +69,10 @@ const handleBack = () => {
 const handleProgress = () => {
   emit('progress');
 };
+
+const handleMenu = () => {
+  emit('menu');
+};
 </script>
 
 <template>
@@ -85,9 +89,14 @@ const handleProgress = () => {
             <span class="text-sm font-medium text-gray-700">Tote: {{ toteId }}</span>
           </div>
         </div>
-        <button type="button" class="text-blue-600 font-medium hover:text-blue-700" @click="handleProgress">
-          Progress
-        </button>
+        <div class="flex items-center gap-3">
+          <button type="button" class="text-blue-600 font-medium hover:text-blue-700" @click="handleProgress">
+            Progress
+          </button>
+          <button type="button" class="p-2 hover:bg-gray-100 rounded-full" @click="handleMenu">
+            <MenuIcon classes="w-6 h-6 text-gray-700" />
+          </button>
+        </div>
       </div>
     </header>
 

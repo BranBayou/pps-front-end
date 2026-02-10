@@ -200,14 +200,25 @@ onMounted(() => {
         v-if="appState === APP_STATES.SCAN_TOTE"
         @select-tote="handleToteSelected"
         @back="handleScanToteBack"
+        @menu="toggleMenu"
       />
 
       <div
         v-else-if="appState === APP_STATES.LOADING"
-        class="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-gray-700"
+        class="flex flex-col min-h-screen bg-gray-50 text-gray-700"
       >
-        <LoadingSpinner classes="w-16 h-16 text-indigo-500" />
-        <p class="text-xl font-semibold mt-4">Optimizing pick route...</p>
+        <header class="bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
+          <div class="flex items-center justify-between">
+            <h1 class="text-lg font-semibold text-gray-900">Optimizing pick route</h1>
+            <button type="button" class="p-2 hover:bg-gray-100 rounded-full" @click="toggleMenu">
+              <MenuIcon classes="w-6 h-6 text-gray-700" />
+            </button>
+          </div>
+        </header>
+        <main class="flex flex-1 flex-col items-center justify-center">
+          <LoadingSpinner classes="w-16 h-16 text-indigo-500" />
+          <p class="text-xl font-semibold mt-4">Optimizing pick route...</p>
+        </main>
       </div>
 
       <PickingScreen
@@ -218,6 +229,7 @@ onMounted(() => {
         @item-picked="handleItemPicked"
         @back="handlePickingBack"
         @progress="handlePickingProgress"
+        @menu="toggleMenu"
       />
 
       <div v-else-if="appState === APP_STATES.PICKING" class="flex items-center justify-center h-screen">
@@ -229,20 +241,32 @@ onMounted(() => {
         :tote-id="toteId"
         :total-items="pickList.length"
         @proceed="handleProceedToPacking"
+        @menu="toggleMenu"
       />
 
       <PackingStartScreen
         v-else-if="appState === APP_STATES.PACKING_START"
         :tote-id="toteId"
         @begin-packing="handleStartPacking"
+        @menu="toggleMenu"
       />
 
       <div
         v-else-if="appState === APP_STATES.PACKING_LOADING"
-        class="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-gray-700"
+        class="flex flex-col min-h-screen bg-gray-50 text-gray-700"
       >
-        <LoadingSpinner classes="w-16 h-16 text-indigo-500" />
-        <p class="text-xl font-semibold mt-4">Generating packing instructions...</p>
+        <header class="bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
+          <div class="flex items-center justify-between">
+            <h1 class="text-lg font-semibold text-gray-900">Generating packing instructions</h1>
+            <button type="button" class="p-2 hover:bg-gray-100 rounded-full" @click="toggleMenu">
+              <MenuIcon classes="w-6 h-6 text-gray-700" />
+            </button>
+          </div>
+        </header>
+        <main class="flex flex-1 flex-col items-center justify-center">
+          <LoadingSpinner classes="w-16 h-16 text-indigo-500" />
+          <p class="text-xl font-semibold mt-4">Generating packing instructions...</p>
+        </main>
       </div>
 
       <PackingScreen
@@ -251,31 +275,44 @@ onMounted(() => {
         :pick-list="pickList"
         :instructions="packingInstructions"
         @packing-complete="handleRestart"
+        @menu="toggleMenu"
       />
 
       <div
         v-else-if="appState === APP_STATES.ERROR"
-        class="flex flex-col items-center justify-center min-h-screen bg-red-50 p-4 text-center"
+        class="flex flex-col min-h-screen bg-red-50 p-4 text-center"
       >
-        <p class="text-red-600 font-semibold">{{ error }}</p>
-        <button
-          type="button"
-          class="mt-4 bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg"
-          @click="handleRestart"
-        >
-          Start Over
-        </button>
+        <header class="bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
+          <div class="flex items-center justify-between">
+            <h1 class="text-lg font-semibold text-gray-900">Error</h1>
+            <button type="button" class="p-2 hover:bg-gray-100 rounded-full" @click="toggleMenu">
+              <MenuIcon classes="w-6 h-6 text-gray-700" />
+            </button>
+          </div>
+        </header>
+        <main class="flex flex-1 flex-col items-center justify-center">
+          <p class="text-red-600 font-semibold">{{ error }}</p>
+          <button
+            type="button"
+            class="mt-4 bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg"
+            @click="handleRestart"
+          >
+            Start Over
+          </button>
+        </main>
       </div>
 
-      <div v-else class="min-h-screen bg-gray-50 flex items-center justify-center p-4 relative">
-        <button
-          type="button"
-          class="absolute top-4 right-4 p-3 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors z-10"
-          @click="toggleMenu"
-        >
-          <MenuIcon classes="w-6 h-6 text-gray-700" />
-        </button>
-        <div class="w-full max-w-3xl space-y-6">
+      <div v-else class="min-h-screen bg-gray-50 flex flex-col">
+        <header class="bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
+          <div class="flex items-center justify-between">
+            <h1 class="text-lg font-semibold text-gray-900">Dashboard</h1>
+            <button type="button" class="p-2 hover:bg-gray-100 rounded-full" @click="toggleMenu">
+              <MenuIcon classes="w-6 h-6 text-gray-700" />
+            </button>
+          </div>
+        </header>
+        <main class="flex flex-1 items-center justify-center p-4">
+          <div class="w-full max-w-3xl space-y-6">
           <div class="bg-white rounded-3xl shadow-lg p-8">
             <!-- <p class="text-sm text-gray-500">
               These are your orders for
@@ -325,6 +362,7 @@ onMounted(() => {
             </button>
           </div>
         </div>
+        </main>
       </div>
     </template>
   </div>

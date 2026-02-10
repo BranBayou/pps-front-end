@@ -76,7 +76,7 @@ function handleClose() {
               Pick {{ remaining }} more {{ remaining === 1 ? 'Unit' : 'Units' }}
             </p>
             <p class="text-center text-sm text-gray-600">from {{ item.bin }}</p>
-            <p class="text-sm font-medium text-gray-700">How many are you picking?</p>
+            <p class="text-sm font-medium text-gray-700 text-center">How many are you picking?</p>
             <div class="flex items-center justify-center gap-4">
               <button
                 type="button"

@@ -1,12 +1,12 @@
 <script setup>
 import { computed, ref } from 'vue';
-import { CheckIcon, ScanIcon, ToteIcon } from '../icons/WarehouseIcons';
+import { CheckIcon, MenuIcon, ScanIcon, ToteIcon } from '../icons/WarehouseIcons';
 
 defineProps({
   toteId: { type: String, required: true },
 });
 
-const emit = defineEmits(['begin-packing']);
+const emit = defineEmits(['begin-packing', 'menu']);
 
 const scanStep = ref('tote');
 const showCheck = ref(false);
@@ -31,11 +31,28 @@ const handleScan = () => {
     }
   }, 700);
 };
+
+const handleMenu = () => {
+  emit('menu');
+};
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4 text-center">
-    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm">
+  <div class="flex flex-col min-h-screen bg-gray-50">
+    <header class="bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <ToteIcon classes="w-6 h-6 text-gray-700" />
+          <h1 class="text-lg font-semibold text-gray-900">Packing tote</h1>
+        </div>
+        <button type="button" class="p-2 hover:bg-gray-100 rounded-full" @click="handleMenu">
+          <MenuIcon classes="w-6 h-6 text-gray-700" />
+        </button>
+      </div>
+    </header>
+
+    <main class="flex flex-1 items-center justify-center p-4 text-center">
+      <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm">
       <div class="relative w-24 h-24 mx-auto mb-6">
         <ToteIcon classes="w-24 h-24 text-indigo-500 transition-transform duration-300" />
         <div
@@ -61,7 +78,8 @@ const handleScan = () => {
         <ScanIcon classes="w-8 h-8" />
         <span>{{ buttonLabel }}</span>
       </button>
-    </div>
+      </div>
+    </main>
   </div>
 </template>
 

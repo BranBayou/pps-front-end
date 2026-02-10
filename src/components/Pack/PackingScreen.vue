@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { BoxIcon, CheckIcon, InformationCircleIcon, LoadingSpinner, ToteIcon, TruckIcon, XIcon } from '../../components/icons/WarehouseIcons';
+import { BoxIcon, CheckIcon, InformationCircleIcon, LoadingSpinner, MenuIcon, ToteIcon, TruckIcon, XIcon } from '../../components/icons/WarehouseIcons';
 import ConfirmBoxesPopup from './ConfirmBoxesPopup.vue';
 import { useShippingServiceStore } from '../../stores/shippingServiceStore';
 
@@ -12,7 +12,7 @@ const props = defineProps({
   instructions: { type: Object, required: true },
 });
 
-const emit = defineEmits(['packing-complete']);
+const emit = defineEmits(['packing-complete', 'menu']);
 
 const BOX_COLORS = ['border-blue-400', 'border-green-400', 'border-yellow-400', 'border-purple-400', 'border-pink-400', 'border-indigo-400'];
 
@@ -108,6 +108,10 @@ const handleFinalizePacking = () => {
   }, 2500);
 };
 
+const handleMenu = () => {
+  emit('menu');
+};
+
 const isRateSelected = (rate) => selectedRate.value?.serviceName === rate.serviceName;
 const selectRate = (rate) => {
   selectedRate.value = rate;
@@ -158,6 +162,9 @@ const handleConfirmBoxes = () => {
           <ToteIcon classes="w-7 h-7" />
           <span class="font-semibold text-lg">Packing Tote: {{ toteId }}</span>
         </div>
+        <button type="button" class="p-2 hover:bg-gray-100 rounded-full" @click="handleMenu">
+          <MenuIcon classes="w-6 h-6 text-gray-700" />
+        </button>
       </div>
     </header>
 

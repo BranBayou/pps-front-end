@@ -1,10 +1,10 @@
 <script setup>
 import { computed, ref, nextTick, onUnmounted } from 'vue';
-import { ArrowLeftIcon, SearchIcon, ToteIcon } from '../icons/WarehouseIcons';
+import { ArrowLeftIcon, MenuIcon, SearchIcon, ToteIcon } from '../icons/WarehouseIcons';
 import { usePickingStore } from '@/stores/pickingStore';
 import { barcodeScannerService } from '@/services/barcodeScannerService';
 
-const emit = defineEmits(['select-tote', 'back']);
+const emit = defineEmits(['select-tote', 'back', 'menu']);
 
 const searchQuery = ref('');
 const pickingStore = usePickingStore();
@@ -28,6 +28,10 @@ const selectTote = (tote) => {
 
 const handleBack = () => {
   emit('back');
+};
+
+const handleMenu = () => {
+  emit('menu');
 };
 
 const stopScanner = () => {
@@ -143,6 +147,13 @@ onUnmounted(() => {
           <ArrowLeftIcon classes="w-6 h-6 text-gray-700" />
         </button>
         <h1 class="text-lg font-semibold text-gray-900 flex-1">Scan tote barcode</h1>
+        <button
+          type="button"
+          class="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          @click="handleMenu"
+        >
+          <MenuIcon classes="w-6 h-6 text-gray-700" />
+        </button>
       </div>
     </header>
 
