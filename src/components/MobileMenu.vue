@@ -43,9 +43,14 @@ const quickActions = [
   <Transition name="menu">
     <div v-if="isOpen" class="fixed inset-0 z-50 bg-black bg-opacity-50" @click="handleClose">
       <div class="absolute right-0 top-0 h-full w-80 bg-white shadow-xl overflow-y-auto" @click.stop>
-        <button type="button" class="absolute top-2 right-2 p-2 hover:bg-indigo-700 rounded-full transition-colors" @click="handleClose">
-          <XIcon classes="w-6 h-6" />
-        </button>
+        <header class="sticky top-0 z-10 bg-white border-b border-gray-200 p-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-gray-900">Menu</h2>
+            <button type="button" class="p-2 hover:bg-gray-100 rounded-full transition-colors" @click="handleClose">
+              <XIcon classes="w-6 h-6 text-gray-700" />
+            </button>
+          </div>
+        </header>
 
         <div class="p-4 space-y-6">
           <!-- Quick Actions -->
