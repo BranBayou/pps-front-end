@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { ArrowLeftIcon, CheckIcon, MenuIcon, ToteIcon } from '../icons/WarehouseIcons';
 import PickQuantityPopup from './PickQuantityPopup.vue';
 import { usePickingStore } from '@/stores/pickingStore';
+import { usePackingStore } from '@/stores/packingStore';
 import { useAppState } from '@/composables/appState';
 
 const props = defineProps({
@@ -13,6 +14,7 @@ const props = defineProps({
 const emit = defineEmits(['back', 'progress', 'menu']);
 
 const pickingStore = usePickingStore();
+const packingStore = usePackingStore();
 const { APP_STATES, appState } = useAppState();
 const pickedQuantities = ref({});
 
@@ -74,6 +76,7 @@ const handleItemPicked = ({ itemId, quantity }) => {
 
   if (allItemsPicked.value) {
     appState.value = APP_STATES.PICKING_COMPLETE;
+    packingStore.savePackingListInlocalStorage();
   }
 };
 
