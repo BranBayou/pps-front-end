@@ -2,18 +2,23 @@
 import { computed, ref } from 'vue';
 import { ArrowLeftIcon, CheckIcon, MenuIcon, ToteIcon } from '../icons/WarehouseIcons';
 import PickQuantityPopup from './PickQuantityPopup.vue';
+import { usePickingStore } from '@/stores/pickingStore';
+import { useAppState } from '@/composables/appState';
 
 const props = defineProps({
   toteId: { type: String, required: true },
   pickList: { type: Array, required: true },
-  pickedQuantities: { type: Object, default: () => ({}) },
 });
 
-const emit = defineEmits(['item-picked', 'back', 'progress', 'menu']);
+const emit = defineEmits(['back', 'progress', 'menu']);
+
+const pickingStore = usePickingStore();
+const { APP_STATES, appState } = useAppState();
+const pickedQuantities = ref({});
 
 const getRemainingQuantity = (item) => {
   if (item.isPicked) return 0;
-  const picked = props.pickedQuantities[item.id] || 0;
+  const picked = pickedQuantities.value[item.id] || 0;
   return Math.max(0, item.quantity - picked);
 };
 
@@ -31,6 +36,14 @@ const totalOrders = computed(() => {
   return 7;
 });
 
+const allItemsPicked = computed(() => {
+  return props.pickList.every((item) => {
+    if (item.isPicked) return true;
+    const picked = pickedQuantities.value[item.id] || 0;
+    return picked >= item.quantity;
+  });
+});
+
 const selectedItem = ref(null);
 
 const remainingForSelected = computed(() =>
@@ -46,14 +59,32 @@ const closePickPopup = () => {
   selectedItem.value = null;
 };
 
+const handleItemPicked = ({ itemId, quantity }) => {
+  const currentPicked = pickedQuantities.value[itemId] || 0;
+  const item = props.pickList.find((i) => i.id === itemId);
+  if (!item) return;
+  if (item.isPicked) return;
+
+  const newPicked = Math.min(currentPicked + quantity, item.quantity);
+  pickedQuantities.value[itemId] = newPicked;
+  if (newPicked >= item.quantity) {
+    item.isPicked = true;
+  }
+  pickingStore.savePickListInLocalStorage();
+
+  if (allItemsPicked.value) {
+    appState.value = APP_STATES.PICKING_COMPLETE;
+  }
+};
+
 const handleConfirmPick = ({ itemId, quantity }) => {
-  emit('item-picked', { itemId, quantity });
+  handleItemPicked({ itemId, quantity });
   closePickPopup();
 };
 
 const handleItemPick = (item, quantity = 1) => {
   if (isItemComplete(item)) return;
-  emit('item-picked', { itemId: item.id, quantity });
+  handleItemPicked({ itemId: item.id, quantity });
 };
 
 const handleItemRowClick = (item) => {

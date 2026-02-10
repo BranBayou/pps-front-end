@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import CompletionScreen from './CompletionScreen.vue';
 import Login from './auth/Login.vue';
 import Logout from './auth/Logout.vue';
@@ -24,7 +24,6 @@ const authStore = useAuthStore();
  
 const toteId = ref('');
 const pickList = ref([]);
-const pickedQuantities = ref({});
 const packingInstructions = ref(null);
 const error = ref('');
 const isMenuOpen = ref(false);
@@ -46,14 +45,6 @@ const dashboardOverview = {
   },
 };
 
-const allItemsPicked = computed(() => {
-  return pickList.value.every((item) => {
-    if (item.isPicked) return true;
-    const picked = pickedQuantities.value[item.id] || 0;
-    return picked >= item.quantity;
-  });
-});
-
 const handleGoToScanTote = () => {
   appState.value = APP_STATES.SCAN_TOTE;
 };
@@ -66,7 +57,6 @@ const handleToteSelected = ({ toteId: selectedToteId }) => {
 const handleStartPicking = async () => {
   appState.value = APP_STATES.LOADING;
   error.value = '';
-  pickedQuantities.value = {};
 
   try {
     const optimizedList = await workflowServiceStore.optimizePickingRoute(orderStore.MOCK_PICK_LIST);
@@ -92,24 +82,6 @@ const handleStartPicking = async () => {
 
 const handleScanToteBack = () => {
   appState.value = APP_STATES.START;
-};
-
-const handleItemPicked = ({ itemId, quantity }) => {
-  const currentPicked = pickedQuantities.value[itemId] || 0;
-  const item = pickList.value.find((i) => i.id === itemId);
-  if (!item) return;
-  if (item.isPicked) return;
-
-  const newPicked = Math.min(currentPicked + quantity, item.quantity);
-  pickedQuantities.value[itemId] = newPicked;
-  if (newPicked >= item.quantity) {
-    item.isPicked = true;
-  }
-  pickingStore.savePickListInLocalStorage();
-
-  if (allItemsPicked.value) {
-    appState.value = APP_STATES.PICKING_COMPLETE;
-  }
 };
 
 const handlePickingBack = () => {
@@ -140,7 +112,6 @@ const handleRestart = () => {
   resetAppState();
   toteId.value = '';
   pickList.value = [];
-  pickedQuantities.value = {};
   error.value = '';
   packingInstructions.value = null;
 };
@@ -225,8 +196,6 @@ onMounted(() => {
         v-else-if="appState === APP_STATES.PICKING && pickList.length > 0"
         :tote-id="toteId"
         :pick-list="pickList"
-        :picked-quantities="pickedQuantities"
-        @item-picked="handleItemPicked"
         @back="handlePickingBack"
         @progress="handlePickingProgress"
         @menu="toggleMenu"
