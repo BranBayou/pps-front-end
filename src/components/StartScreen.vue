@@ -48,6 +48,9 @@ const dashboardOverview = {
 const handleGoToScanTote = () => {
   appState.value = APP_STATES.SCAN_TOTE;
   localStorage.removeItem('pickList');
+  pickingStore.resetPickList();
+  pickList.value = [];
+  toteId.value = '';
 };
 
 const handleToteSelected = ({ toteId: selectedToteId }) => {
@@ -115,6 +118,7 @@ const handleRestart = () => {
   pickList.value = [];
   error.value = '';
   packingInstructions.value = null;
+  pickingStore.resetPickList();
 };
 
 const toggleMenu = () => {

@@ -43,6 +43,11 @@ export const usePickingStore = defineStore('picking', () => {
         savePickListInLocalStorage();
     }
 
+    function resetPickList () {
+        pickList.selectedTote = {};
+        pickList.orders = [];
+    }
+
     const getPickList = computed(() => pickList);
 
     function savePickListInLocalStorage() {
@@ -66,5 +71,6 @@ export const usePickingStore = defineStore('picking', () => {
         addNewPickList,
         savePickListInLocalStorage,
         loadPickListFromLocalStorage,
+        resetPickList,
     };
 });
