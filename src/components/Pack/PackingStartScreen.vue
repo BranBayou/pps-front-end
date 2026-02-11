@@ -12,23 +12,16 @@ const scanStep = ref('tote');
 const showCheck = ref(false);
 
 const prompt = computed(() => {
-  if (scanStep.value === 'tote') return 'Please scan the tote barcode to begin.';
-  if (scanStep.value === 'deliveryNote') return 'Next, scan the delivery note to verify.';
-  return 'Verification complete!';
+  return 'Please scan the tote barcode to begin.';
 });
 
-const buttonLabel = computed(() => (scanStep.value === 'tote' ? 'Scan Tote' : 'Scan Delivery Note'));
+const buttonLabel = computed(() => 'Scan Tote');
 
 const handleScan = () => {
   showCheck.value = true;
   setTimeout(() => {
     showCheck.value = false;
-    if (scanStep.value === 'tote') {
-      scanStep.value = 'deliveryNote';
-    } else if (scanStep.value === 'deliveryNote') {
-      scanStep.value = 'done';
-      emit('begin-packing');
-    }
+    emit('begin-packing');
   }, 700);
 };
 

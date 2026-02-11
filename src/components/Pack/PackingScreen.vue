@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { BoxIcon, CheckIcon, InformationCircleIcon, LoadingSpinner, MenuIcon, ToteIcon, TruckIcon, XIcon } from '../../components/icons/WarehouseIcons';
+import { BoxIcon, CheckIcon, InformationCircleIcon, LoadingSpinner, MenuIcon, ScanIcon, ToteIcon, TruckIcon, XIcon } from '../../components/icons/WarehouseIcons';
 import ConfirmBoxesPopup from './ConfirmBoxesPopup.vue';
 import { useShippingServiceStore } from '../../stores/shippingServiceStore';
 
@@ -74,13 +74,13 @@ const handleConfirmPack = () => {
   } else {
     packedItemIndex.value = props.pickList.length;
     quantityToScan.value = 0;
-    packingStep.value = 'confirming_boxes';
     // Initialize confirmed boxes with all recommended boxes
     confirmedBoxes.value = props.instructions.boxes.map((box, index) => ({
       ...box,
       index,
       confirmed: true,
     }));
+    packingStep.value = 'scan_delivery_note';
   }
 };
 
@@ -106,6 +106,10 @@ const handleFinalizePacking = () => {
   setTimeout(() => {
     emit('packing-complete');
   }, 2500);
+};
+
+const handleScanDeliveryNote = () => {
+  packingStep.value = 'confirming_boxes';
 };
 
 const handleMenu = () => {
@@ -325,6 +329,19 @@ const handleConfirmBoxes = () => {
             <span>Confirm</span>
           </button>
         </div>
+      </div>
+
+      <div v-else-if="packingStep === 'scan_delivery_note'" class="text-center w-full">
+        <h3 class="text-xl font-bold mb-4 text-gray-800">Scan Delivery Note</h3>
+        <p class="text-gray-600 mb-6">Please scan the delivery note to continue to shipping.</p>
+        <button
+          type="button"
+          class="w-full flex items-center justify-center space-x-3 bg-indigo-600 text-white font-bold py-5 px-6 rounded-xl text-xl hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-transform hover:scale-105"
+          @click="handleScanDeliveryNote"
+        >
+          <ScanIcon classes="w-8 h-8" />
+          <span>Scan Delivery Note</span>
+        </button>
       </div>
 
       <div v-else-if="packingStep === 'selecting_courier'" class="text-center w-full">

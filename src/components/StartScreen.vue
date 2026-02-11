@@ -178,6 +178,10 @@ onMounted(() => {
       toteId.value = pickingStore.pickList.selectedTote.id;
     }
   }
+
+  if (appState.value === APP_STATES.PACKING && pickList.value.length > 0 && !packingInstructions.value) {
+    handleStartPacking();
+  }
 });
 
 </script>
