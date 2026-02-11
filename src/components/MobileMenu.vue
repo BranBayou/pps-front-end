@@ -23,10 +23,16 @@ watch(
   }
 );
 
-const emit = defineEmits(['close', 'logout', 'start-new-picking']);
+const emit = defineEmits(['close', 'logout', 'start-new-picking', 'open-packing-order']);
 
 const handleClose = () => {
   emit('close');
+};
+
+const handleActiveOrderClick = (order) => {
+  if (order?.status !== 'Packing') return;
+  emit('open-packing-order', order);
+  handleClose();
 };
 
 
@@ -107,6 +113,7 @@ const handleQuickAction = (quickAction) => {
                   'border-yellow-400': order.status === 'Picking',
                   'border-blue-400': order.status === 'Packing',
                 }"
+                @click="handleActiveOrderClick(order)"
               >
                 <div class="flex items-center justify-between mb-1">
                   <span class="font-semibold text-gray-900">{{ order.toteId }}</span>

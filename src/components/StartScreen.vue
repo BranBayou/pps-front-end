@@ -102,6 +102,21 @@ const handleProceedToPacking = () => {
   appState.value = APP_STATES.PACKING_START;
 };
 
+const handleOpenPackingOrder = (order) => {
+  if (!order?.storageKey) return;
+  const storedPickList = localStorage.getItem(order.storageKey);
+  if (!storedPickList) return;
+  try {
+    const parsedPickList = JSON.parse(storedPickList);
+    toteId.value = parsedPickList?.selectedTote?.id || '';
+    pickList.value = parsedPickList?.orders || [];
+    packingInstructions.value = null;
+    appState.value = APP_STATES.PACKING_START;
+  } catch (error) {
+    console.error('Failed to load packing list', error);
+  }
+};
+
 const handleStartPacking = async () => {
   appState.value = APP_STATES.PACKING_LOADING;
   try {
@@ -173,7 +188,13 @@ onMounted(() => {
     <Logout v-if="authStore.showLogout" @confirm="handleLogoutConfirm" @cancel="handleLogoutCancel" />
 
     <template v-if="authStore.userState.isAuthenticated">
-      <MobileMenu :is-open="isMenuOpen" @close="closeMenu" @logout="handleLogoutClick" @start-new-picking="handleGoToScanTote" />
+      <MobileMenu
+        :is-open="isMenuOpen"
+        @close="closeMenu"
+        @logout="handleLogoutClick"
+        @start-new-picking="handleGoToScanTote"
+        @open-packing-order="handleOpenPackingOrder"
+      />
 
       <ScanToteScreen
         v-if="appState === APP_STATES.SCAN_TOTE"

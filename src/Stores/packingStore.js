@@ -13,12 +13,22 @@ export const usePackingStore = defineStore('packing', () => {
         .filter((key) => key.startsWith('packingList_'))
         .sort()
         .reverse()
-        .map((key) => ({
-          id: key,
-          toteId: key.replace('packingList_', ''),
-          status: 'Packing',
-          label: `Tote: ${JSON.parse(localStorage.getItem(key))?.selectedTote?.id || 'Unknown'}`,
-        }));
+        .map((key) => {
+          let parsed = null;
+          try {
+            parsed = JSON.parse(localStorage.getItem(key));
+          } catch (error) {
+            parsed = null;
+          }
+          const toteId = parsed?.selectedTote?.id || 'Unknown';
+          return {
+            id: key,
+            storageKey: key,
+            toteId,
+            status: 'Packing',
+            label: `Tote: ${toteId}`,
+          };
+        });
     }
 
     return {
