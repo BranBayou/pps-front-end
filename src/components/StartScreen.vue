@@ -170,7 +170,7 @@ onMounted(() => {
     <Logout v-if="authStore.showLogout" @confirm="handleLogoutConfirm" @cancel="handleLogoutCancel" />
 
     <template v-if="authStore.userState.isAuthenticated">
-      <MobileMenu :is-open="isMenuOpen" @close="closeMenu" @logout="handleLogoutClick" />
+      <MobileMenu :is-open="isMenuOpen" @close="closeMenu" @logout="handleLogoutClick" @start-new-picking="handleGoToScanTote" />
 
       <ScanToteScreen
         v-if="appState === APP_STATES.SCAN_TOTE"

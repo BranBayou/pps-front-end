@@ -6,7 +6,7 @@ const props = defineProps({
   isOpen: { type: Boolean, required: true },
 });
 
-const emit = defineEmits(['close', 'logout']);
+const emit = defineEmits(['close', 'logout', 'start-new-picking']);
 
 const handleClose = () => {
   emit('close');
@@ -33,10 +33,33 @@ const pendingTasks = [
 
 const quickActions = [
   { id: '1', label: 'New Pick List', icon: ToteIcon, action: 'new-pick' },
-  { id: '2', label: 'View Inventory', icon: BoxIcon, action: 'inventory' },
+  { id: '2', label: 'View Packing List', icon: BoxIcon, action: 'packing'},
   { id: '3', label: 'Shipping Status', icon: TruckIcon, action: 'shipping' },
   { id: '4', label: 'Completed Orders', icon: CheckIcon, action: 'completed' },
 ];
+
+function viewPackingList() {
+  const packingLists = JSON.parse(localStorage.getItem('packingLists') || '[]');
+  console.log('Packing Lists:', packingLists);
+}
+
+const handleQuickAction = (quickAction) => {
+  if (typeof quickAction?.onClick === 'function') {
+    quickAction.onClick();
+    return;
+  }
+  if (quickAction?.action === 'new-pick') {
+    emit('start-new-picking');
+    handleClose();
+    console.log('New Pick List action triggered');
+  }
+  if (quickAction?.action === 'packing') {
+    viewPackingList();
+  }
+  if (quickAction?.action === 'shipping') {
+    console.log('New Pick List action triggered');
+  }
+};
 </script>
 
 <template>
@@ -62,6 +85,7 @@ const quickActions = [
                 :key="action.id"
                 type="button"
                 class="w-full flex items-center space-x-3 p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-colors text-left"
+                @click="handleQuickAction(action)"
               >
                 <component :is="action.icon" classes="w-5 h-5 text-indigo-600" />
                 <span class="font-medium text-gray-900">{{ action.label }}</span>
