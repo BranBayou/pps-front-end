@@ -111,12 +111,12 @@ const handleOpenPackingOrder = (order) => {
     toteId.value = parsedPickList?.selectedTote?.id || '';
     pickList.value = parsedPickList?.orders || [];
     packingInstructions.value = null;
+    localStorage.setItem('pickList', storedPickList);
     appState.value = APP_STATES.PACKING_START;
   } catch (error) {
     console.error('Failed to load packing list', error);
   }
 };
-
 const handleStartPacking = async () => {
   appState.value = APP_STATES.PACKING_LOADING;
   try {

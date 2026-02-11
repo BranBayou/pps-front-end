@@ -53,6 +53,20 @@ const currentItem = computed(() => (packingStep.value === 'packing' ? props.pick
 const currentItemName = computed(() => currentItem.value?.name ?? '');
 const currentItemQuantity = computed(() => currentItem.value?.quantity ?? 0);
 
+const savePackingProgress = () => {
+  try {
+    localStorage.setItem(
+      'pickList',
+      JSON.stringify({
+        selectedTote: { id: props.toteId },
+        orders: props.pickList,
+      })
+    );
+  } catch (error) {
+    console.warn('Failed to save packing progress', error);
+  }
+};
+
 const handleConfirmPack = () => {
   if (!currentItem.value) return;
   const quantity = parseInt(enteredQuantity.value, 10);
@@ -68,10 +82,14 @@ const handleConfirmPack = () => {
   }
 
   if (packedItemIndex.value < props.pickList.length - 1) {
+    currentItem.value.isPacked = true;
+    savePackingProgress();
     packedItemIndex.value += 1;
     quantityToScan.value = props.pickList[packedItemIndex.value].quantity;
     enteredQuantity.value = '1';
   } else {
+    currentItem.value.isPacked = true;
+    savePackingProgress();
     packedItemIndex.value = props.pickList.length;
     quantityToScan.value = 0;
     // Initialize confirmed boxes with all recommended boxes
@@ -202,24 +220,24 @@ const handleConfirmBoxes = () => {
               :key="item.id"
               class="flex items-center space-x-3 p-2 rounded-lg transition-all border-l-8"
               :class="[
-                index < packedItemIndex ? 'bg-green-100 border-green-400 opacity-60' : '',
+                item.isPacked ? 'bg-green-100 border-green-400 opacity-60' : '',
                 index === packedItemIndex && packingStep === 'packing'
                   ? ['bg-yellow-100', BOX_COLORS[(skuToBoxIndexMap.get(item.sku) ?? 0) % BOX_COLORS.length], 'ring-4 ring-yellow-300']
                   : '',
-                index > packedItemIndex || packingStep !== 'packing'
+                !item.isPacked && (index > packedItemIndex || packingStep !== 'packing')
                   ? ['bg-gray-50', BOX_COLORS[(skuToBoxIndexMap.get(item.sku) ?? 0) % BOX_COLORS.length]]
                   : '',
               ]"
             >
               <div
                 class="w-6 h-6 rounded-md flex-shrink-0 flex items-center justify-center border-2"
-                :class="index < packedItemIndex ? 'bg-green-500 border-green-500' : 'border-gray-300'"
+                :class="item.isPacked ? 'bg-green-500 border-green-500' : 'border-gray-300'"
               >
-                <CheckIcon v-if="index < packedItemIndex" classes="w-4 h-4 text-white" />
+                <CheckIcon v-if="item.isPacked" classes="w-4 h-4 text-white" />
               </div>
               <img :src="item.imageUrl" :alt="item.name" class="w-12 h-12 object-cover rounded-md" />
               <div class="flex-grow">
-                <p :class="index < packedItemIndex ? 'line-through text-gray-500' : 'text-gray-800 font-semibold'">
+                <p :class="item.isPacked ? 'line-through text-gray-500' : 'text-gray-800 font-semibold'">
                   {{ item.name }}
                 </p>
                 <p class="text-sm text-gray-500">Qty: {{ item.quantity }}</p>
@@ -326,7 +344,7 @@ const handleConfirmBoxes = () => {
             @click="handleConfirmPack"
           >
             <CheckIcon classes="w-8 h-8" />
-            <span>Confirm</span>
+            <span>Pack</span>
           </button>
         </div>
       </div>
