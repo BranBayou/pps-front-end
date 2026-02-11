@@ -50,6 +50,7 @@ const dashboardOverview = {
 const handleGoToScanTote = () => {
   appState.value = APP_STATES.SCAN_TOTE;
   localStorage.removeItem('pickList');
+  localStorage.removeItem('currentPackingStorageKey');
   pickingStore.resetPickList();
   pickList.value = [];
   toteId.value = '';
@@ -100,6 +101,7 @@ const handlePickingProgress = () => {
 
 const handleProceedToPacking = () => {
   appState.value = APP_STATES.PACKING_START;
+  localStorage.removeItem('currentPackingStorageKey');
 };
 
 const handleOpenPackingOrder = (order) => {
@@ -112,6 +114,7 @@ const handleOpenPackingOrder = (order) => {
     pickList.value = parsedPickList?.orders || [];
     packingInstructions.value = null;
     localStorage.setItem('pickList', storedPickList);
+    localStorage.setItem('currentPackingStorageKey', order.storageKey);
     appState.value = APP_STATES.PACKING_START;
   } catch (error) {
     console.error('Failed to load packing list', error);

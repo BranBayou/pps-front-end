@@ -69,13 +69,15 @@ const handleSelectItem = (item, index) => {
 
 const savePackingProgress = () => {
   try {
-    localStorage.setItem(
-      'pickList',
-      JSON.stringify({
-        selectedTote: { id: props.toteId },
-        orders: props.pickList,
-      })
-    );
+    const payload = JSON.stringify({
+      selectedTote: { id: props.toteId },
+      orders: props.pickList,
+    });
+    localStorage.setItem('pickList', payload);
+    const storageKey = localStorage.getItem('currentPackingStorageKey');
+    if (storageKey) {
+      localStorage.setItem(storageKey, payload);
+    }
   } catch (error) {
     console.warn('Failed to save packing progress', error);
   }
