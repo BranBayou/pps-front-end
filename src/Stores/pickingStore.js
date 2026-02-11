@@ -38,7 +38,10 @@ export const usePickingStore = defineStore('picking', () => {
         pickList.orders = [];
 
         for (const order of newPickList.orders) {
-            pickList.orders.push(order);
+            pickList.orders.push({
+                ...order,
+                isPicked: false,
+            });
         }
         savePickListInLocalStorage();
     }
