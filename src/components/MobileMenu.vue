@@ -1,10 +1,27 @@
 <script setup>
-import { computed } from 'vue';
+import { ref, watch } from 'vue';
 import { ArrowLeftIcon, BoxIcon, CheckIcon, MenuIcon, ToteIcon, TruckIcon, XIcon } from './icons/WarehouseIcons';
+import { usePackingStore } from '@/stores/packingStore';
 
 const props = defineProps({
   isOpen: { type: Boolean, required: true },
 });
+
+const packingStore = usePackingStore();
+const activeOrders = ref([]);
+
+const refreshActiveOrders = () => {
+  activeOrders.value = packingStore.getActiveOrders();
+};
+
+watch(
+  () => props.isOpen,
+  (isOpen) => {
+    if (isOpen) {
+      refreshActiveOrders();
+    }
+  }
+);
 
 const emit = defineEmits(['close', 'logout', 'start-new-picking']);
 
@@ -12,12 +29,6 @@ const handleClose = () => {
   emit('close');
 };
 
-// Sample menu lists - these could be made dynamic via props
-const activeOrders = [
-  { id: '1', toteId: 'T123456', status: 'Picking', items: 7 },
-  { id: '2', toteId: 'T234567', status: 'Packing', items: 5 },
-  { id: '3', toteId: 'T345678', status: 'Picking', items: 12 },
-];
 
 const recentCompleted = [
   { id: '1', toteId: 'T111111', completedAt: '2 hours ago', items: 8 },
@@ -33,15 +44,9 @@ const pendingTasks = [
 
 const quickActions = [
   { id: '1', label: 'New Pick List', icon: ToteIcon, action: 'new-pick' },
-  { id: '2', label: 'View Packing List', icon: BoxIcon, action: 'packing'},
   { id: '3', label: 'Shipping Status', icon: TruckIcon, action: 'shipping' },
   { id: '4', label: 'Completed Orders', icon: CheckIcon, action: 'completed' },
 ];
-
-function viewPackingList() {
-  const packingLists = JSON.parse(localStorage.getItem('packingLists') || '[]');
-  console.log('Packing Lists:', packingLists);
-}
 
 const handleQuickAction = (quickAction) => {
   if (typeof quickAction?.onClick === 'function') {
@@ -52,9 +57,6 @@ const handleQuickAction = (quickAction) => {
     emit('start-new-picking');
     handleClose();
     console.log('New Pick List action triggered');
-  }
-  if (quickAction?.action === 'packing') {
-    viewPackingList();
   }
   if (quickAction?.action === 'shipping') {
     console.log('New Pick List action triggered');
@@ -118,8 +120,11 @@ const handleQuickAction = (quickAction) => {
                     {{ order.status }}
                   </span>
                 </div>
-                <p class="text-sm text-gray-600">{{ order.items }} items</p>
+                <p class="text-sm text-gray-600">{{ order.label }}</p>
               </div>
+              <p v-if="activeOrders.length === 0" class="text-sm text-gray-500">
+                No active packing lists.
+              </p>
             </div>
           </section>
 

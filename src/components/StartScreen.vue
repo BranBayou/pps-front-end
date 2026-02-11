@@ -14,10 +14,12 @@ import { useWorkflowServiceStore } from '@/stores/workflowServiceStore';
 import { useOrderStore } from '@/stores/orderStore';
 import { usePickingStore } from '@/stores/pickingStore';
 import { useAppState } from '@/composables/appState';
+import { usePackingStore } from '@/stores/packingStore';
 
 const workflowServiceStore = useWorkflowServiceStore();
 const orderStore = useOrderStore();
 const pickingStore = usePickingStore();
+const packingStore = usePackingStore();
 const { APP_STATES, appState, resetAppState } = useAppState();
 
 const authStore = useAuthStore();
@@ -123,6 +125,7 @@ const handleRestart = () => {
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
+  packingStore.getActiveOrders();
 };
 
 const closeMenu = () => {
