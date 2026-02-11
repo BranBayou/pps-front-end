@@ -52,6 +52,20 @@ const skuToBoxIndexMap = computed(() => {
 const currentItem = computed(() => (packingStep.value === 'packing' ? props.pickList[packedItemIndex.value] : null));
 const currentItemName = computed(() => currentItem.value?.name ?? '');
 const currentItemQuantity = computed(() => currentItem.value?.quantity ?? 0);
+const allItemsPacked = computed(() => props.pickList.every((item) => item.isPacked));
+
+watch(allItemsPacked, (allPacked) => {
+  if (allPacked && packingStep.value === 'packing') {
+    packingStep.value = 'scan_delivery_note';
+  }
+});
+
+const handleSelectItem = (item, index) => {
+  if (!item || item.isPacked || packingStep.value !== 'packing') return;
+  packedItemIndex.value = index;
+  quantityToScan.value = item.quantity;
+  enteredQuantity.value = '1';
+};
 
 const savePackingProgress = () => {
   try {
@@ -130,6 +144,7 @@ const handleScanDeliveryNote = () => {
   packingStep.value = 'confirming_boxes';
 };
 
+
 const handleMenu = () => {
   emit('menu');
 };
@@ -191,25 +206,6 @@ const handleConfirmBoxes = () => {
     </header>
 
     <main class="flex-grow p-4 md:p-6 overflow-y-auto">
-      <div class="bg-white p-5 rounded-2xl shadow mb-6">
-        <h2 class="text-lg font-bold text-gray-800 mb-4">
-          Recommended Boxes ({{ instructions.boxes.length }})
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div
-            v-for="(box, index) in instructions.boxes"
-            :key="box.boxSize + index"
-            class="bg-purple-50 border-l-8 rounded-lg p-4 flex items-center space-x-4"
-            :class="BOX_COLORS[index % BOX_COLORS.length]"
-          >
-            <BoxIcon classes="w-10 h-10 text-purple-500 mt-1 flex-shrink-0" />
-            <div>
-              <p class="text-lg font-bold text-purple-900">{{ box.boxSize }} Box</p>
-              <!-- <p class="text-sm text-gray-700">{{ box.contents }}</p> -->
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div class="grid grid-cols-1">
         <div class="bg-white p-5 rounded-2xl shadow">
@@ -228,6 +224,7 @@ const handleConfirmBoxes = () => {
                   ? ['bg-gray-50', BOX_COLORS[(skuToBoxIndexMap.get(item.sku) ?? 0) % BOX_COLORS.length]]
                   : '',
               ]"
+              @click="handleSelectItem(item, index)"
             >
               <div
                 class="w-6 h-6 rounded-md flex-shrink-0 flex items-center justify-center border-2"
@@ -248,6 +245,26 @@ const handleConfirmBoxes = () => {
               >
                 FRAGILE
               </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl shadow mb-6">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">
+          Recommended Boxes ({{ instructions.boxes.length }})
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div
+            v-for="(box, index) in instructions.boxes"
+            :key="box.boxSize + index"
+            class="bg-purple-50 border-l-8 rounded-lg p-4 flex items-center space-x-4"
+            :class="BOX_COLORS[index % BOX_COLORS.length]"
+          >
+            <BoxIcon classes="w-10 h-10 text-purple-500 mt-1 flex-shrink-0" />
+            <div>
+              <p class="text-lg font-bold text-purple-900">{{ box.boxSize }} Box</p>
+              <!-- <p class="text-sm text-gray-700">{{ box.contents }}</p> -->
             </div>
           </div>
         </div>
@@ -329,7 +346,7 @@ const handleConfirmBoxes = () => {
             Remaining: <span class="font-bold text-blue-600">{{ quantityToScan }}</span> / {{ currentItemQuantity }}
           </p>
         </div>
-        <div class="flex items-center space-x-4 w-full">
+        <div v-if="currentItem && !currentItem.isPacked" class="flex items-center space-x-4 w-full">
           <input
             v-model="enteredQuantity"
             type="number"
