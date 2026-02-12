@@ -190,7 +190,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="h-screen md:max-w-3xl md:mx-auto md:shadow-lg bg-gray-50 text-gray-900">
+  <div class="md:max-w-[400px] md:mx-auto md:shadow-lg bg-gray-50 text-gray-900" style="height: 800px;">
     <Login v-if="authStore.showLogin" @login="handleLogin" @close="handleLoginClose" />
     <Logout v-if="authStore.showLogout" @confirm="handleLogoutConfirm" @cancel="handleLogoutCancel" />
 
@@ -308,7 +308,7 @@ onMounted(() => {
         </main>
       </div>
 
-      <div v-else class="min-h-screen bg-gray-50 flex flex-col">
+      <div v-else class=" bg-gray-50 flex flex-col">
         <header class="bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
           <div class="flex items-center justify-between">
             <h1 class="text-lg font-semibold text-gray-900">Dashboard</h1>

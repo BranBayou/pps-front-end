@@ -29,10 +29,13 @@ const showInstructionsPopup = ref(false);
 watch(
   () => props.pickList,
   (list) => {
-    packedItemIndex.value = 0;
-    quantityToScan.value = list[0]?.quantity ?? 0;
+    const firstUnpackedIndex = list.findIndex((item) => !item.isPacked);
+    const hasUnpackedItems = firstUnpackedIndex !== -1;
+
+    packedItemIndex.value = hasUnpackedItems ? firstUnpackedIndex : Math.max(0, list.length - 1);
+    quantityToScan.value = hasUnpackedItems ? (list[firstUnpackedIndex]?.quantity ?? 0) : 0;
     enteredQuantity.value = '1';
-    packingStep.value = 'packing';
+    packingStep.value = hasUnpackedItems ? 'packing' : 'scan_delivery_note';
     shippingRates.value = [];
     selectedRate.value = null;
     confirmedBoxes.value = [];
@@ -54,11 +57,15 @@ const currentItemName = computed(() => currentItem.value?.name ?? '');
 const currentItemQuantity = computed(() => currentItem.value?.quantity ?? 0);
 const allItemsPacked = computed(() => props.pickList.every((item) => item.isPacked));
 
-watch(allItemsPacked, (allPacked) => {
-  if (allPacked && packingStep.value === 'packing') {
-    packingStep.value = 'scan_delivery_note';
-  }
-});
+watch(
+  allItemsPacked,
+  (allPacked) => {
+    if (allPacked && packingStep.value === 'packing') {
+      packingStep.value = 'scan_delivery_note';
+    }
+  },
+  { immediate: true }
+);
 
 const handleSelectItem = (item, index) => {
   if (!item || item.isPacked || packingStep.value !== 'packing') return;
